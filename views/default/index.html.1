@@ -1,0 +1,641 @@
+{{extend 'layout.html'}}
+{{left_sidebar_enabled=right_sidebar_enabled=False}}
+
+<script src="{{=URL('static','js/ui/jquery.ui.core.js')}}"></script>
+<script src="{{=URL('static','js/ui/jquery.ui.widget.js')}}"></script>
+<script src="{{=URL('static','js/ui/jquery.ui.tabs.js')}}"></script>
+<link rel="stylesheet" href={{=URL('static','js/themes/base/jquery.ui.all.css')}} /> 
+ 
+<style type="text/css"> 
+table, tr{text-align:center;width:100%;}
+td{text-align:left;}
+tr.tr_grades td{text-align:center;}
+table.subjects, td.subjects {text-align:center; border: 1px solid black;}
+.elig{font-weight:bold;color:#00A000;}
+.inelig{font-weight:bold;color:#A00000;}
+.require{font-weight:bold;color:#0000A0;}
+.semester th{text-align:left;}
+.my_grade input{text-align:center}
+tr.strike,tr.strike td {
+    background-color: #E8E8E8;
+    color: #E8E8E8;
+}
+</style> 
+<script>
+
+function compute_gwa(){
+$units = 0;
+$sum = 0;
+
+$count = 0;
+$total = 0;
+$total_units = 0
+
+   if($('.semester')){
+       $('.semester').each(function(index) {
+          $units = 0;
+          $sum = 0;
+          $(this).siblings().each(function(index){
+             $grades = $(this);
+             $start = 1;
+             
+             if ($grades[0].children[2].innerHTML.indexOf('(') != -1) {
+                 return 1;          
+             }
+             $td = $(this).first().children().first().children() 
+
+             if($td.is(':checkbox:not(:checked)')) {
+                return 1;
+             }
+
+             if ($grades[0].children[3].innerHTML.length != 0){
+                if(!isNaN($grades[0].children[3].innerHTML)){
+                    $total += $grades[0].children[2].innerHTML * $grades[0].children[3].innerHTML
+                    $sum += $grades[0].children[2].innerHTML * $grades[0].children[3].innerHTML
+                    $units += parseFloat($grades[0].children[2].innerHTML);                                                    
+                    $total_units += parseFloat($grades[0].children[2].innerHTML);                                 
+                }    
+                else if($grades[0].children[3].innerHTML.indexOf('INC') != -1 || $grades[0].children[3].innerHTML.indexOf('4.00') != -1){                
+        
+                    if($grades[0].children[3].innerHTML.indexOf('5.00') != - 1 || $grades[0].children[3].innerHTML.indexOf('P') != - 1 || $grades[0].children[3].innerHTML.indexOf('F') != - 1) return 1;
+
+                    $start = $grades[0].children[3].innerHTML.indexOf('(') + 1
+                    $end = $grades[0].children[3].innerHTML.indexOf(')')
+                    if($start != 0) {
+                        $grade = $grades[0].children[3].innerHTML.substring($start,$end)
+                        $total += $grades[0].children[2].innerHTML * $grades[0].children[3].innerHTML.substring($start,$end)
+                        $sum += $grades[0].children[2].innerHTML * $grades[0].children[3].innerHTML.substring($start,$end)
+                        $units += parseFloat($grades[0].children[2].innerHTML);                                                    
+                        $total_units += parseFloat($grades[0].children[2].innerHTML);                                                         
+                    }
+                } 
+             } 
+        })        
+        
+        if($units != 0){
+
+           $gwa = Math.round($sum/$units * 1000)/1000
+           $gwa= $gwa.toFixed(3)
+           if($(this).parent().children().hasClass('tr_gwa')){
+               $(this).parent().children().last().remove();
+           }
+           $(this).parent().append('<tr class="tr_grades tr_gwa"><td><td/><td><label>Total:</label> '+$units+' units</td><td><label>'+$gwa+'</label></td></tr>')
+           
+         }
+   })
+      
+   $total_gwa = Math.round($total/$total_units * 1000)/1000
+   $total_gwa = $total_gwa.toFixed(3)
+
+   $('#total_gwa').html('<p>Total: <label>'+$total_gwa +'</label></p>')
+   $('#total_units').html('<p>Total: <label>'+$total_units+'</label> units</p>')
+   if($total_gwa <= 1.20) $('#congrats').html('<b>Summa cum laude: Congrats! Astig</b>');
+   else if($total_gwa <= 1.45)$('#congrats').html('<b>Magna cum laude: Congrats! Astig</b>');
+   else if($total_gwa <= 1.75)$('#congrats').html('<b>Cum laude: Congrats! Astig</b>');
+
+
+   if($total_gwa > 1.20){
+      grade = Math.ceil(($total - 1.2*$total_units)/0.2);
+      $('#summa').html('You need to ace ' + grade +' units to become a <i>summa cum laude</i>.');  
+   } else $('#summa').html('');
+ 
+   if ($total_gwa > 1.45){ 
+      grade = Math.ceil(($total - 1.45*$total_units)/0.45);
+      $('#magna').html('You need to ace ' + grade +' units to become a <i>magna cum laude</i>.');
+   } else {$('#magna').html('')}
+   
+   if ($total_gwa > 1.75){ 
+      grade = Math.ceil(($total - 1.75*$total_units)/0.75);
+      $('#cum').html('You need to ace ' + grade +' units to become a <i>cum laude</i>.');
+   } else {$('#cum').html('');}
+   }
+}
+
+$(function(){
+
+    compute_gwa();
+    $(":checkbox").live('click', function(){
+        $(this).parent().parent().toggleClass('strike');
+        compute_gwa();
+    })
+    
+    $('.my_grade').click(function(){
+        if($(this).has(':input').length == 0){
+               $(this).hide()
+               $(this).next().show()
+               $(this).next().children().first().focus()
+               
+        }else{
+               $(this).hide()
+               $(this).prev().show()
+        }
+    })
+    
+    $('.my_grade :input').blur(function(){
+    
+        var grade = parseFloat($(this).val())
+        $(this).parent().hide()
+        $(this).parent().prev().show()
+        
+        if (!isNaN(grade)) $(this).parent().prev().text(grade.toFixed(2))
+        else $(this).parent().prev().text('')
+        compute_gwa();               
+    })
+
+    $('.my_grade :input').keydown(function(e){
+    
+        var TABKEY = 9;
+        var UP = 38;
+        var DOWN = 40;
+                  
+        var grade = parseFloat($(this).val())
+               
+        if (!isNaN(grade)) $(this).parent().prev().text(grade.toFixed(2))
+        else $(this).parent().prev().text('')
+        compute_gwa();               
+
+        $index = $('.my_grade :input').index($(this))
+
+        if(e.keyCode == TABKEY) {
+            e.preventDefault();
+
+            if(e.shiftKey){
+                if($index == 0) {
+                    $('.my_grade').not(':has(:input)').last().click()
+                    $(this).click() 
+                    return
+                }        
+                $($('.my_grade :input')[$index - 1]).parent().prev().click()
+            
+            } else {
+                if($('.my_grade :input').last()[0] == this) {
+                    $('.my_grade').first().click()
+                    $(this).click() 
+                    return
+                }        
+                $($('.my_grade :input')[$index + 1]).parent().prev().click()
+            }
+        } else if(e.keyCode == UP) {
+                if($index == 0) {
+                    $('.my_grade').not(':has(:input)').last().click()
+                    $(this).click() 
+                    return
+                }        
+                $($('.my_grade :input')[$index - 1]).parent().prev().click()
+            } else if(e.keyCode == DOWN) {
+                if($('.my_grade :input').last()[0] == this) {
+                    $('.my_grade').first().click()
+                    $(this).click() 
+                    return
+                }        
+                $($('.my_grade :input')[$index + 1]).parent().prev().click()
+        }
+        $(this).click() 
+        
+    })
+})
+
+</script>
+Another GWA Calculator + EEE Online Advising + GE Lister v1.0
+<br/>
+<br/>
+<h2>Instructions:</h2><sup>[patterned from {{=A('this', _href='http://www.upprogrammingguild.org/gwacalc/gwacalc_old.php')}}]</sup><br/>
+<ol>
+<li>Go to the CRS, and view your grades.</li>
+<li>Press ctrl+A (or equivalent) to select all text on the page.</li>
+<li>Press ctrl+C (or equivalent) to copy all text.</li>
+<li>Paste it in the text area.</li>
+<li>Click "Submit" and wait for the page to load.</li>
+<li>If it didn't work the first time, try again.</li>
+<li>If it still didn't work, fill up the comment box in the Feedback section  and copy all the text of the grades in the Comment field.<br/>
+I'll try to figure out what happened. :)
+</li>
+</ol>
+The site do not and will not store any of your information.
+{{=form}}
+{{if info is not None:}}
+
+{{if info != 'Error':}}
+<table>
+<tr><th colspan=2><h2>Student Information</h2></th><tr>
+  <tr><td><label>Name</label></td><td>{{=info['name']}}</td></tr>
+  <tr><td><label>Student Number</label></td><td>{{=info['studno']}}</td></tr>
+  <tr><td><label>Major</label></td><td>{{=info['course']}}</td></tr>
+</table>
+<br/>
+<br/>
+<div id="tabs">
+  <ul>
+  <li><a href="#tabs-1">GWA</a></li>
+  <li><a href="#tabs-2">Online Advising</a></li>
+  <li><a href="#tabs-3">Non-Major Subjects</a></li>
+  <li><a href="#tabs-4">Available GEs</a></li>        
+  </ul>
+  <div id="tabs-1">
+     Click the grades to edit.
+     <table>
+        <tr><td>
+           <table>
+              <tr><td>
+              <table id='grades'>
+                 {{for sem in mygrades:}}
+                    <tr><td><hr/><table>  
+                    {{=TR(TH(sem['sem'], _colspan=3), _class='semester')}}  
+                    {{for subject in sem['subject']:}}
+                       {{=TR(TD(INPUT(_type='checkbox', value='on')),TD(subject['subject'],_width='30%'),                             
+                                   TD(subject['unit'],_width='30%'),TD(subject['grade'],_width='40%', _class='my_grade'), TD( INPUT( _value=subject['grade']), _class='my_grade hidden'), _class='tr_grades')}}
+                       {{pass}}
+                    </table></td></tr>
+                 {{pass}}
+              </table>
+              </td></tr>
+           </table>
+        </td></tr>
+     </table>
+     <br/>
+     <div id='total_gwa'></div>
+     <div id='total_units'></div>
+     <div id='congrats'></div>
+     <div id='summa'></div>
+     <div id='magna'></div>
+     <div id='cum'></div> 
+  </div>
+  <div id="tabs-2">
+     {{if type(mysubjects) != str:}}        
+     <table>
+        <br/>
+        <h4>The {{=year}} {{=course}} curriculum is used.</h4><br/>
+        <tr><td>
+           <tr>
+              <th>Subjects Eligible</th>
+              <th>Subjects Not Eligible</th>
+              <th>Senior/Thesis</th>
+           </tr>
+        </td></tr>
+        <tr><td>
+           <tr>
+              <td>
+                 <table class='subjects'>
+                    <tr>
+                       <th>Subject</th>
+                       <th>Corequisites</th>
+                    </tr>
+                    {{if len(mysubjects['elig']) != 0:}}
+                       {{for subject in mysubjects['elig']:}}
+                          {{=TR(TD(subject['subject'], _class='subjects elig'), TD(subject['coreq'], _class='subjects'))}}    
+                       {{pass}}
+                    {{else:}}
+                       {{=TR(TD(I('You have no majors to take.'), _colspan=3))}}
+                    {{pass}}
+                 </table>
+                 * subjects with no grade not considered
+              </td>
+              <td>   
+                 <table class='subjects'>
+                    <tr>
+                       <th>Subject</th>
+                       <th>Prerequisites</th>
+                       <th>Corequisites</th>
+                    </tr>
+                    {{if len(mysubjects['non_elig']) != 0:}}                                
+                       {{for subject in mysubjects['non_elig']:}}
+                          {{=TR(TD(subject['subject'], _class='subjects inelig'), TD(subject['prereq'], _class='subjects'), TD(subject['coreq'], _class='subjects'))}}                 
+                       {{pass}}
+                    {{else:}}
+                       {{=TR(TD(I('You have no majors with unmet prerequisites.'), _colspan=3))}}
+                    {{pass}}              
+                 </table>
+              </td>
+              <td>                        
+                 <table class='subjects'>
+                    <tr>
+                       <th>Subject</th>
+                       <th>Requirements</th>
+                    </tr>
+                    {{if len(mysubjects['senior']) != 0:}}                                          
+                       {{for subject in mysubjects['senior']:}}
+                          {{=TR(TD(subject['subject'], _class='subjects require'), TD(subject['requirements'], _class='subjects'))}}    
+                       {{pass}}    
+                    {{else:}}
+                       {{=TR(TD(I('You have no senior subjects to take.'), _colspan=3))}}
+                    {{pass}}                    
+                 </table>
+               </td>
+            </tr>                                        
+         </td>
+       </tr>   
+     </table>
+     <table>        
+        <tr>
+           <td><h3>Retention Rules</h3>
+              <ol>
+                 <li>Two (2) failures (5, unresolved 4, unresolved INC, drop) in the same Math subject (Math 17, 53, 54 or 55)</li>
+                 <li>Two (2) takes each, of three (3) Math subjects (Math 17, 53, 54 and/or 55)</li>
+                 <li>Two (2) failures (5, unresolved 4, unresolved INC, drop) in the same EEE subject (EEE 31, 33, 35, 23, or 41)</li>
+                 <li>Two (2) takes each, of three (3) EEE subjects (EEE 31, 33, 35, 23 or 41) <sup>[patterned from <a href="http://www.eee.upd.edu.ph/eeeadvising">this</a>]</sup> </li>
+              </ol>               
+           </td>
+        </tr>
+     </table>
+     {{else:}}
+        {{if 'too old' in mysubjects:}}{{=I('Sorry, you are too old for this.')}}
+        {{elif 'not BS' in mysubjects:}}{{=I('Sorry, have you tried setting your course to BS?')}}
+        {{else:}}{{=I('Sorry, are you sure you are from EEE?')}}
+        {{pass}}
+     {{pass}}
+  </div>
+  <div id='tabs-3'>
+     {{if type(mysubjects) != str:}}        
+  
+     See note below.    
+     <table>
+        <tr>
+           <td><tr>
+              <th>Arts and Humanities</th>
+              <th>Social Sciences and Philosophy</th>
+              <th>Math, Science and Technology</th>
+           </tr></td>
+        </tr>
+        <tr>
+           <td>
+              <tr>
+                 <td>
+                    <table>
+                       <tr>
+                          <th>Subject</th>
+                          <th>Semester Taken</th>
+                       </tr>
+                       {{for ge in ges['ah']:}}
+                          {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
+                       {{pass}}                                
+                    </table>
+                    * you need at least 15 units
+                 </td>
+                 <td>   
+                    <table>
+                       <tr>
+                          <th>Subject</th>
+                          <th>Semester Taken</th>
+                       </tr>
+                       {{for ge in ges['ssp']:}}
+                          {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
+                       {{pass}}                                
+                    </table>
+                    * you need at least 15 units                            
+                 </td>
+                 <td>                        
+                    <table>
+                       <tr>
+                          <th>Subject</th>
+                          <th>Semester Taken</th>
+                       </tr>
+                       {{for ge in ges['mst']:}}
+                          {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
+                       {{pass}}
+                    </table>
+                    * if EEE, you need at least 9 units
+                 </td>
+              </tr>                                        
+           </td>
+        </tr>            
+        <tr><td colspan=3><hr/></td></tr>            
+        <tr>
+           <td>
+              <tr>
+                 <th>Philippine Studies</th>
+                 <th>Physical Education</th>
+                 <th>CWTS</th>
+              <tr>
+           </td>
+        </tr>
+        <tr>
+           <td>
+              <tr>
+                 <td>
+                    <table>
+                       <tr>
+                          <th>Subject</th>
+                          <th>Semester Taken</th>
+                       </tr>
+                       {{for ge in ges['phil_stud']:}}
+                          {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
+                       {{pass}}
+                   </table>
+                   * you need at least 6 units                            
+                </td>
+                <td>
+                   <table>
+                      <tr>
+                         <th>Subject</th>
+                         <th>Semester Taken</th>
+                      </tr>
+                      {{for pe in pes:}}
+                         {{=TR(TD(pe['subject'], _class='subjects'), TD(pe['sem'], _class='subjects'))}}    
+                      {{pass}}
+                   </table>
+                   * you need at least 4 PEs
+                </td>
+                <td>   
+                   <table>
+                      <tr>
+                         <th>Subject</th>
+                         <th>Semester Taken</th>
+                      </tr>
+                      {{for cwt in cwts:}}
+                         {{=TR(TD(cwt['subject'], _class='subjects'), TD(cwt['sem'], _class='subjects'))}}    
+                      {{pass}}
+                   </table>
+                </td>
+             </tr>                                        
+          </td>                
+       </tr>
+       <tr><td colspan=3><hr/></td></tr>                            
+       <tr>
+          <td>
+             <tr>
+                <th>English Communication</th>
+                <th>Electives/Others</th>
+             </tr>
+          </td>
+       </tr>
+       <tr>
+          <td>
+             <tr>
+                <td>
+                   <table>
+                      <tr>
+                         <th>Subject</th>
+                         <th>Semester Taken</th>
+                      </tr>
+                      {{for ge in ges['english']:}}
+                         {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
+                      {{pass}}
+                   </table>
+                   * you need at least 9 units                            
+                </td>
+                <td>
+                   <table>
+                      <tr>
+                         <th>Subject</th>
+                         <th>Semester Taken</th>
+                      </tr>
+                      {{for ge in ges['others']:}}
+                         {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
+                      {{pass}}
+                   </table>
+                </td>
+             </tr>                                        
+          </td>                
+       </tr>            
+    </table>
+    <i>Note:</i>
+    <ol>
+    <li>EEE students are not allowed to take Math 1,Math 2, Physics 10,Chem 1,EEE 10,Nat Sci 1</li>
+    <li>EEE students are highly discouraged from taking Kom 1,Kom 2 & Kom 3</li>
+    <li>SuperGE L Arch 1 can be taken to fulfill GE requirement either AH, MST or SSP; can be credited only once.</li>
+    <li>MajorGE SEA 30 can be taken to fulfill GE requirement either AH or SSP; can be credited only once.</li>
+    </ol>     
+     {{else:}}
+        {{if 'too old' in mysubjects:}}{{=I('Sorry, you are too old for this.')}}
+        {{elif 'not BS' in mysubjects:}}{{=I('Sorry, have you tried setting your course to BS?')}}        
+        {{else:}}{{=I('Sorry, are you sure you are from EEE?')}}
+        {{pass}}    
+    {{pass}}
+ </div>
+ <div id='tabs-4'>
+     {{if type(mysubjects) != str:}}        
+ See note below.        
+    <table>
+       <tr>
+          <td>
+             <tr>
+                <th>Arts and Humanities</th>
+                <th>Social Sciences and Philosophy</th>
+                <th>Math, Science and Technology</th>
+             <tr>
+          </td>
+       </tr>
+       <tr>
+          <td>
+             <tr>
+                <td>
+                   <table>
+                      <tr>
+                         <th>Subject</th>
+                      </tr>
+                      {{for ge in non_ges['ah']:}}
+                         {{=TR(TD(ge.ge.name, _class='subjects'))}}    
+                      {{pass}}                                
+                   </table>
+                   * you need at least 15 units
+                </td>
+                <td>   
+                   <table>
+                      <tr>
+                         <th>Subject</th>
+                      </tr>
+                      {{for ge in non_ges['ssp']:}}
+                         {{=TR(TD(ge.ge.name, _class='subjects'))}}    
+                      {{pass}}                                
+                   </table>
+                   * you need at least 15 units                            
+                </td>
+                <td>                        
+                   <table>
+                      <tr>
+                         <th>Subject</th>
+                      </tr>
+                      {{for ge in non_ges['mst']:}}
+                         {{=TR(TD(ge.ge.name, _class='subjects'))}}    
+                      {{pass}}                                                                
+                   </table>
+                   * if EEE, you need at least 9 units
+                </td>
+             </tr>                                        
+          </td>
+       </tr>            
+       <tr><td colspan=3><hr/></td></tr>            
+          <tr>
+             <td>
+                <tr>
+                   <th>Philippine Studies</th>
+                   <th>English Comminucation</th>
+                </tr>
+             </td>
+          </tr>
+          <tr>
+             <td>
+                <tr>
+                   <td>
+                      <table>
+                         <tr>
+                            <th>Subject</th>
+                         </tr>
+                         {{for ge in non_ges['phil_stud']:}}
+                            {{=TR(TD(ge.ge.name, _class='subjects'))}}    
+                         {{pass}}
+                      </table>
+                      * you need at least 6 units                            
+                   </td>
+                   <td>
+                      <table>
+                         <tr>
+                            <th>Subject</th>
+                         </tr>
+                         {{for ge in non_ges['english']:}}
+                            {{=TR(TD(ge.ge.name, _class='subjects'))}}    
+                         {{pass}}
+                      </table>
+                      * you need at least 9 units
+                   </td>
+                </tr>                                        
+             </td>                
+          </tr>            
+       </table>
+       <i>Note:</i>
+       <ol>
+       <li>EEE students are not allowed to take Math 1,Math 2, Physics 10,Chem 1,EEE 10,Nat Sci 1</li>
+       <li>EEE students are highly discouraged from taking Kom 1,Kom 2 & Kom 3</li>
+       <li>MajorGE L Arch 1 can be taken to fulfill GE requirement either AH, MST or SSP; can be credited only once.</li>
+       <li>SuperGE SEA 30 can be taken to fulfill GE requirement either AH or SSP; can be credited only once.</li>
+      </ol>
+     {{else:}}
+        {{if 'too old' in mysubjects:}}{{=I('Sorry, you are too old for this.')}}
+        {{elif 'not BS' in mysubjects:}}{{=I('Sorry, have you tried setting your course to BS?')}}        
+        {{else:}}{{=I('Sorry, are you sure you are from EEE?')}}
+        {{pass}}
+     {{pass}}      
+  </div>  
+</div>
+{{else:}}
+{{=I('Sorry we are not cool enough to make sense of what you just posted.', BR())}}
+{{pass}}
+{{pass}}
+<script>
+    $(function() {
+        $( "#tabs" ).tabs();
+    });
+</script>
+<br/>
+<br/>
+<br/>
+<h4>About:</h4>
+Another GWA Calculator inspired by Payton Yao's {{=A('GWA Calculator', _href='http://www.upprogrammingguild.org/gwacalc.php')}} and John Benedict Lorenzo's {{=A('GWA Calculator', _href='https://www.facebook.com/notes/john-bennedict-lorenzo/crs-gwa-calculator/194750463878791')}}.<br/>
+EEE Online Advising is inspired by Tyrone Tai's {{=A('EEE Advising', _href='http://www.eee.upd.edu.ph/eeeadvising')}}.<br/>
+List of GE subjects can be found {{=A('here', _href='www.upd.edu.ph/~our/files/ListofRGEPCourses.pdf')}}.<br/>
+<br/>
+
+<h4>Changelogs:</h4>
+<i>April 12,2011</i>: Added Tabs and Shift Tabs in editing grades to manuever.<br/>
+<i>April 12,2011</i>: Added Up and Down in editing grades to manuever.<br/>
+<br/>
+
+<h4>Disclaimer:</h4>
+This should not be used in place of official documents pertaining to the student's academic performance nor should it be regarded as an authoritative guide on the student's curriculum.<sup>[patterned from {{=A('this', _href='https://crs.upd.edu.ph/viewgrades')}}]</sup><br/>
+<br/>
+<h4>Feedback:</h4>
+In case you find errors on the output of this site or you want to request some features.<br/>
+Just click the 'Comment' button and fill out the comment box below. I will try to address it as soon as possible.
+<button onclick="jQuery('#contactme').slideToggle()">Comment</button>
+<div id='contactme' class='hidden'>{{=contactme}}</div>
+<script>jQuery('.hidden').hide();</script>

@@ -1,0 +1,14 @@
+(dp1
+S'category'
+p2
+S'INTEGER REFERENCES category(id) ON DELETE CASCADE'
+p3
+sS'id'
+p4
+S'INTEGER PRIMARY KEY AUTOINCREMENT'
+p5
+sS'subject'
+p6
+S'INTEGER REFERENCES subject(id) ON DELETE CASCADE'
+p7
+s.
