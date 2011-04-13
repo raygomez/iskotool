@@ -1,0 +1,153 @@
+timestamp: 2011-03-13T14:12:14.171752
+CREATE TABLE auth_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name CHAR(128),
+    last_name CHAR(128),
+    email CHAR(512),
+    password CHAR(512),
+    registration_key CHAR(512),
+    reset_password_key CHAR(512)
+);
+success!
+timestamp: 2011-03-13T14:12:14.312018
+CREATE TABLE auth_group(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2011-03-13T14:12:14.423610
+CREATE TABLE auth_membership(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    group_id INTEGER REFERENCES auth_group(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2011-03-13T14:12:14.533501
+CREATE TABLE auth_permission(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER REFERENCES auth_group(id) ON DELETE CASCADE,
+    name CHAR(512),
+    table_name CHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2011-03-13T14:12:14.655805
+CREATE TABLE auth_event(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    time_stamp TIMESTAMP,
+    client_ip CHAR(512),
+    user_id INTEGER REFERENCES auth_user(id) ON DELETE CASCADE,
+    origin CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2011-04-07T22:59:04.536288
+CREATE TABLE subject(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(512) NOT NULL
+);
+success!
+timestamp: 2011-04-07T22:59:04.900284
+CREATE TABLE prerequisites(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    prereq INTEGER REFERENCES subject(id) ON DELETE CASCADE,
+    subject INTEGER REFERENCES subject(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2011-04-07T22:59:05.013093
+CREATE TABLE corequisites(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    coreq INTEGER REFERENCES subject(id) ON DELETE CASCADE,
+    subject INTEGER REFERENCES subject(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2011-04-07T22:59:57.092883
+CREATE TABLE category(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    label CHAR(512) NOT NULL
+);
+success!
+timestamp: 2011-04-07T22:59:57.258953
+CREATE TABLE subject_category(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    subject INTEGER REFERENCES subject(id) ON DELETE CASCADE,
+    category INTEGER REFERENCES category(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2011-04-08T17:55:35.028516
+CREATE TABLE syllabus(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    year INTEGER NOT NULL
+);
+success!
+timestamp: 2011-04-08T17:55:35.155994
+ALTER TABLE prerequisites ADD year INTEGER REFERENCES syllabus(id) ON DELETE CASCADE;
+timestamp: 2011-04-08T17:56:01.332583
+CREATE TABLE course(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    course CHAR(512) NOT NULL
+);
+success!
+timestamp: 2011-04-08T17:56:01.507283
+CREATE TABLE subject_course(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    subject INTEGER REFERENCES subject(id) ON DELETE CASCADE,
+    course INTEGER REFERENCES course(id) ON DELETE CASCADE,
+    year INTEGER REFERENCES syllabus(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2011-04-08T17:56:01.625052
+ALTER TABLE corequisites ADD year INTEGER REFERENCES syllabus(id) ON DELETE CASCADE;
+timestamp: 2011-04-09T16:11:43.031950
+CREATE TABLE subject_requirements(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    subject INTEGER REFERENCES subject(id) ON DELETE CASCADE,
+    requirements CHAR(512) NOT NULL
+);
+success!
+timestamp: 2011-04-10T16:53:19.595952
+CREATE TABLE comment(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(512) NOT NULL,
+    email CHAR(512) NOT NULL,
+    comment CHAR(512) NOT NULL,
+    timestamp TIMESTAMP NOT NULL DEFAULT '2011-04-10 16:53:19'
+);
+success!
+timestamp: 2011-04-10T16:54:44.475967
+CREATE TABLE comments(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name CHAR(512) NOT NULL,
+    email CHAR(512) NOT NULL,
+    comment TEXT NOT NULL,
+    timestamp TIMESTAMP NOT NULL DEFAULT '2011-04-10 16:54:44'
+);
+success!
+timestamp: 2011-04-10T22:49:41.008752
+CREATE TABLE domains(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    domain CHAR(512) NOT NULL
+);
+success!
+timestamp: 2011-04-10T23:07:52.385851
+CREATE TABLE ge_domain(
+    id INTEGER PRIMARY KEY AUTOINCREMENT
+);
+success!
+timestamp: 2011-04-10T23:26:35.989810
+ALTER TABLE ge_domain ADD ge INTEGER REFERENCES subject(id) ON DELETE CASCADE;
+timestamp: 2011-04-10T23:26:36.328099
+ALTER TABLE ge_domain ADD domain INTEGER REFERENCES domains(id) ON DELETE CASCADE;
+timestamp: 2011-04-11T00:54:39.127452
+CREATE TABLE phil_stud(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ge INTEGER REFERENCES subject(id) ON DELETE CASCADE
+);
+success!
+timestamp: 2011-04-11T01:28:12.465418
+CREATE TABLE english(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ge INTEGER REFERENCES subject(id) ON DELETE CASCADE
+);
+success!

@@ -1,0 +1,10 @@
+(dp1
+S'id'
+p2
+S'INTEGER PRIMARY KEY AUTOINCREMENT'
+p3
+sS'year'
+p4
+S'INTEGER NOT NULL'
+p5
+s.
