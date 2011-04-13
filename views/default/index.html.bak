@@ -17,8 +17,9 @@ table.subjects, td.subjects {text-align:center; border: 1px solid black;}
 .semester th{text-align:left;}
 .my_grade input{text-align:center}
 tr.strike,tr.strike td {
-    background-color: #E8E8E8;
-    color: #E8E8E8;
+    //background-color: #E8E8E8;
+    //color: #E8E8E8;
+    color: #bbb;
 }
 </style> 
 <script>
@@ -211,7 +212,8 @@ Another GWA Calculator + EEE Online Advising + GE Lister v1.0
 I'll try to figure out what happened. :)
 </li>
 </ol>
-The site do not and will not store any of your information.
+<br/>
+<br/>
 {{=form}}
 {{if info is not None:}}
 
@@ -623,6 +625,9 @@ The site do not and will not store any of your information.
 Another GWA Calculator inspired by Payton Yao's {{=A('GWA Calculator', _href='http://www.upprogrammingguild.org/gwacalc.php')}} and John Benedict Lorenzo's {{=A('GWA Calculator', _href='https://www.facebook.com/notes/john-bennedict-lorenzo/crs-gwa-calculator/194750463878791')}}.<br/>
 EEE Online Advising is inspired by Tyrone Tai's {{=A('EEE Advising', _href='http://www.eee.upd.edu.ph/eeeadvising')}}.<br/>
 List of GE subjects can be found {{=A('here', _href='http://www.upd.edu.ph/~our/files/ListofRGEPCourses.pdf')}}.<br/>
+The site do not and will not store any of your information. If unconvinced, see {{=A('this', _href='https://code.google.com/p/iskotool/source/browse/controllers/default.py?spec=svn20cf6fe783043374a9a9ea2a9c70a350ab29fb8d&r=20cf6fe783043374a9a9ea2a9c70a350ab29fb8d')}}.
+For interested developers, click {{=A('this', _href='https://code.google.com/p/iskotool/')}}
+<br/>
 <br/>
 
 <h4>Changelogs:</h4>
