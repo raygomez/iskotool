@@ -9,15 +9,28 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
+
 def index():
     """
     example action using the internationalization operator T and flash
     rendered by views/default/index.html or views/generic.html
     """
+    
+    courses = db(db.course.id > 0).select()
+    my_course = ['Autodetect course']
+    for course in courses:
+        my_course.append(course.course)
+    
+    
+    syllabi = db(db.syllabus.id > 0).select()
+    my_syllabus = ['Autodetect syllabus']
+    for syllabus in syllabi:
+        my_syllabus.append(syllabus.year)
+    
     form = SQLFORM.factory(
         Field('grades', 'text', label='Grades', requires=IS_NOT_EMPTY()),
-        Field('course', 'list:string', requires=IS_IN_SET([0,1,2,3],labels=['Autodetect course','BS CoE','BS ECE','BS EE'], zero=None)),
-        Field('curriculum', 'list:string', requires=IS_IN_SET([0,1,2],labels=['Autodectect syllabus','2004','2010'], zero=None))
+        Field('course', 'list:string', requires=IS_IN_SET(range(len(my_course)),labels=my_course, zero=None)),
+        Field('curriculum', 'list:string', requires=IS_IN_SET(range(len(my_syllabus)),labels=my_syllabus, zero=None))
     )
     
     contactme = SQLFORM(db.comments)
@@ -46,29 +59,32 @@ def index():
 
 def parse_subjects(mygrades, info, mycourse, myyear):
 
-    courses = ['Auto','BS CoE','BS ECE','BS EE']
-    years = ['Auto','2004','2010']
+    courses = db(db.course.id > 0).select()
+    my_course = ['Autodetect course']
+    for course in courses:
+        my_course.append(course.course)
+
+    syllabi = db(db.syllabus.id > 0).select()
+    my_syllabus = []
+    for syllabus in syllabi:
+        my_syllabus.append(syllabus.year)
 
     if mycourse == '0':
-        if 'Bachelor of Science in Computer Engineering' in info['course']:
-            course = db(db.course.course == 'BS CoE').select().first()  
-        elif 'Bachelor of Science in Electronics and Communications Engineering' in info['course']:
-            course = db(db.course.course == 'BS ECE').select().first()  
-        elif 'Bachelor of Science in Electrical Engineering' in info['course']:   
-            course = db(db.course.course == 'BS EE').select().first()  
-        elif 'Master of Science in Electrical Engineering' in info['course']:   
-            return 'not BS',None,None,None,None,None,None        
-        else: return 'not EEE',None,None,None,None,None,None
-    else: course = db(db.course.course == courses[int(mycourse)]).select().first()  
+        course = db(db.course.course == info['course']).select().first()
+        if course is None:
+            if 'Master ' in info['course']:   
+                return 'not BS',None,None,None,None,None,None        
+            else: return 'not supported',None,None,None,None,None,None
+    else: course = db(db.course.course == my_course[int(mycourse)]).select().first()  
     
     if myyear == '0':
         studno = int(info['studno'][:4])
-
-        if studno >= 2004 and studno < 2010: syllabus = db(db.syllabus.year == 2004).select().first()
-        elif studno >= 2010: syllabus = db(db.syllabus.year == 2010).select().first()
+        year = filter(lambda x: x >= studno, my_syllabus)
+        if year is not None:
+            syllabus = db(db.syllabus.year == year[0]).select().first()
         else: return 'too old',None,None,None,None,None,None
 
-    else: syllabus = db(db.syllabus.year == int(years[int(myyear)])).select().first()
+    else: syllabus = db(db.syllabus.year == int(my_syllabus[int(myyear)-1])).select().first()
     
     majors = db((db.subject_course.course == course.id) & (db.subject_course.year == syllabus.id))._select(db.subject_course.subject)
     

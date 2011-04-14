@@ -4,7 +4,9 @@
 <script src="{{=URL('static','js/ui/jquery.ui.core.js')}}"></script>
 <script src="{{=URL('static','js/ui/jquery.ui.widget.js')}}"></script>
 <script src="{{=URL('static','js/ui/jquery.ui.tabs.js')}}"></script>
+<script src="{{=URL('static','cluetip/jquery.cluetip.js')}}"></script>
 <link rel="stylesheet" href={{=URL('static','js/themes/base/jquery.ui.all.css')}} /> 
+<link rel="stylesheet" href={{=URL('static','cluetip/jquery.cluetip.css')}} /> 
  
 <style type="text/css"> 
 table, tr{text-align:center;width:100%;}
@@ -93,7 +95,7 @@ $total_units = 0
    if($total_gwa <= 1.20) $('#congrats').html('<b>Summa cum laude: Congrats! Astig</b>');
    else if($total_gwa <= 1.45)$('#congrats').html('<b>Magna cum laude: Congrats! Astig</b>');
    else if($total_gwa <= 1.75)$('#congrats').html('<b>Cum laude: Congrats! Astig</b>');
-
+   else $('#congrats').html('');
 
    if($total_gwa > 1.20){
       grade = Math.ceil(($total - 1.2*$total_units)/0.2);
@@ -113,6 +115,7 @@ $total_units = 0
 }
 
 $(function(){
+if($('.semester')){
 
     compute_gwa();
     $(":checkbox").live('click', function(){
@@ -194,6 +197,18 @@ $(function(){
             $($('.my_grade :input')[$index + 1]).parent().prev().click()    
         }
     })
+    
+    $('td.subj123').cluetip({
+        splitTitle: '|',
+        cursor: 'pointer',
+        arrows: 'true',
+        cluetipClass: 'jtip rounded',
+        fx: {
+            open:       'show', // can be 'show' or 'slideDown' or 'fadeIn'
+            openSpeed:  ''        
+        },
+    });
+}
 })
 
 </script>
@@ -342,7 +357,7 @@ I'll try to figure out what happened. :)
      {{else:}}
         {{if 'too old' in mysubjects:}}{{=I('Sorry, you are too old for this.')}}
         {{elif 'not BS' in mysubjects:}}{{=I('Sorry, have you tried setting your course to BS?')}}
-        {{else:}}{{=I('Sorry, are you sure you are from EEE?')}}
+        {{else:}}{{=I('Sorry, your course is not yet supported.')}}
         {{pass}}
      {{pass}}
   </div>
@@ -368,7 +383,7 @@ I'll try to figure out what happened. :)
                           <th>Semester Taken</th>
                        </tr>
                        {{for ge in ges['ah']:}}
-                          {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
+                          {{=TR(TD(ge['subject'], _class='subjects subj', _title='Basic College English|Basic grammar, usage & composition skills in English.'), TD(ge['sem'], _class='subjects'))}}    
                        {{pass}}                                
                     </table>
                     * you need at least 15 units
@@ -500,7 +515,7 @@ I'll try to figure out what happened. :)
      {{else:}}
         {{if 'too old' in mysubjects:}}{{=I('Sorry, you are too old for this.')}}
         {{elif 'not BS' in mysubjects:}}{{=I('Sorry, have you tried setting your course to BS?')}}        
-        {{else:}}{{=I('Sorry, are you sure you are from EEE?')}}
+        {{else:}}{{=I('Sorry, your course is not yet supported.')}}
         {{pass}}    
     {{pass}}
  </div>
@@ -604,7 +619,7 @@ I'll try to figure out what happened. :)
      {{else:}}
         {{if 'too old' in mysubjects:}}{{=I('Sorry, you are too old for this.')}}
         {{elif 'not BS' in mysubjects:}}{{=I('Sorry, have you tried setting your course to BS?')}}        
-        {{else:}}{{=I('Sorry, are you sure you are from EEE?')}}
+        {{else:}}{{=I('Sorry, your course is not yet supported.')}}
         {{pass}}
      {{pass}}      
   </div>  
