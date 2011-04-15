@@ -80,6 +80,8 @@ crud.settings.auth = None                      # =auth to enforce authorization 
 db.define_table(
     'subject',
     Field('name', notnull=True),
+    Field('title'),
+    Field('description', 'text'),
     format='%(name)s'
 )
 

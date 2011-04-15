@@ -132,6 +132,7 @@ def parse_subjects(mygrades, info, mycourse, myyear):
             if subject['subject'] == 'Soc Sci I': subject['subject'] = 'Soc Sci 1'   #Fixed for Soc Sci I
             if subject['subject'] == 'Soc Sci II': subject['subject'] = 'Soc Sci 2'   #Fixed for Soc Sci II
             if subject['subject'] == 'Comm 3 Eng': subject['subject'] = 'Comm 3'   #Fixed for Comm 3
+
             blank = subject['grade'] == ''
             fail = '5.00' in subject['grade']
             ng = subject['grade'] == 'NG'
@@ -148,17 +149,20 @@ def parse_subjects(mygrades, info, mycourse, myyear):
                         taken_pes.append({'subject':subject['subject'], 'sem':semester})
                     elif 'CWTS' in subject['subject']:
                         taken_cwts.append({'subject':subject['subject'], 'sem':semester})
-                elif len(ges.find(lambda row: row.name == subject['subject'])) != 0:              
-                    if len(ges_ah.find(lambda row: row.ge.name == subject['subject'])) != 0: 
-                        taken_ahs.append({'subject':subject['subject'], 'sem':semester})
+                elif len(ges.find(lambda row: row.name == subject['subject'])) != 0:
+                    ge = ges_ah.find(lambda row: row.ge.name == subject['subject']).first()
+                    if ge is not None: 
+                        taken_ahs.append({'subject':subject['subject'], 'sem':semester, 'title':ge.ge.title, 'description':ge.ge.description})
                         taken_ah.append(subject['subject'])
-                        
-                    if len(ges_mst.find(lambda row: row.ge.name == subject['subject'])) != 0: 
-                        taken_msts.append({'subject':subject['subject'], 'sem':semester})
+
+                    ge = ges_mst.find(lambda row: row.ge.name == subject['subject']).first()                 
+                    if ge is not None: 
+                        taken_mst.append({'subject':subject['subject'], 'sem':semester, 'title':ge.ge.title, 'description':ge.ge.description})                    
                         taken_mst.append(subject['subject'])
-                        
-                    if len(ges_ssp.find(lambda row: row.ge.name == subject['subject'])) != 0: 
-                        taken_ssps.append({'subject':subject['subject'], 'sem':semester})
+
+                    ge = ges_ssp.find(lambda row: row.ge.name == subject['subject']).first()                                    
+                    if ge is not None: 
+                        taken_ssp.append({'subject':subject['subject'], 'sem':semester, 'title':ge.ge.title, 'description':ge.ge.description})                    
                         taken_ssp.append(subject['subject'])
                         
                     if len(ges_phil_stud.find(lambda row: row.name == subject['subject'])) != 0: 

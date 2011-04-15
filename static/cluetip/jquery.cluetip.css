@@ -40,7 +40,7 @@
   margin: 0;
   background-color: #d9d9c2;
 }
-.cluetip-default h3#cluetip-title {
+.cluetip-default h4#cluetip-title {
   margin: 0 0 5px;
   padding: 8px 10px 4px;
   font-size: 1.1em;
@@ -100,7 +100,7 @@
   background-color: #fff;
 }
 
-.cluetip-jtip h3#cluetip-title {
+.cluetip-jtip h4#cluetip-title {
   margin: 0 0 5px;
   padding: 2px 5px;
   //font-size: 16px;

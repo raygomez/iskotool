@@ -80,6 +80,8 @@ crud.settings.auth = None                      # =auth to enforce authorization 
 db.define_table(
     'subject',
     Field('name', notnull=True),
+    Field('title'),
+    Field('description', 'text'),
     format='%(name)s'
 )
 
@@ -174,3 +176,9 @@ db.define_table(
     Field('ge', db.subject, notnull=True),
 )
 db.phil_stud.ge.requires = IS_IN_DB(db, 'subject.id', '%(name)s')
+
+db.define_table(
+    'english',
+    Field('ge', db.subject, notnull=True),
+)
+db.english.ge.requires = IS_IN_DB(db, 'subject.id', '%(name)s')

@@ -45,7 +45,7 @@
       if (!$('#cluetip').length) {
         $(['<div id="cluetip">',
           '<div id="cluetip-outer">',
-            '<h3 id="cluetip-title"></h3>',
+            '<h4 id="cluetip-title"></h4>',
             '<div id="cluetip-inner"></div>',
           '</div>',
           '<div id="cluetip-extra"></div>',
@@ -492,8 +492,8 @@
     // settings for when hoverIntent plugin is used             
     hoverIntent: {    
                       sensitivity:  3,
-              			  interval:     50,
-              			  timeout:      0
+                          interval:     50,
+                          timeout:      0
     },
 
     // short-circuit function to run just before clueTip is shown. 

@@ -151,3 +151,7 @@ CREATE TABLE english(
     ge INTEGER REFERENCES subject(id) ON DELETE CASCADE
 );
 success!
+timestamp: 2011-04-15T06:50:54.917913
+ALTER TABLE subject ADD description TEXT;
+timestamp: 2011-04-15T06:50:55.058894
+ALTER TABLE subject ADD title CHAR(512);
