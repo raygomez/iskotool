@@ -200,6 +200,7 @@ if($('.semester')){
     
     $('td.ge').cluetip({
         splitTitle: '|',
+        width: 350,
         cursor: 'pointer',
         arrows: 'true',
         cluetipClass: 'jtip rounded',
