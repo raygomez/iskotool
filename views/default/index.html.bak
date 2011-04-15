@@ -384,7 +384,7 @@ I'll try to figure out what happened. :)
                           <th>Semester Taken</th>
                        </tr>
                        {{for ge in ges['ah']:}}
-                          {{=TR(TD(ge['subject'], _class='subjects subj', _title=ge['title'] + '|'+ ge['description']), TD(ge['sem'], _class='subjects'))}}    
+                          {{=TR(TD(ge['subject'], _class='subjects ge', _title=ge['title'] + '|'+ ge['description']), TD(ge['sem'], _class='subjects'))}}    
                        {{pass}}                                
                     </table>
                     * you need at least 15 units
@@ -396,7 +396,7 @@ I'll try to figure out what happened. :)
                           <th>Semester Taken</th>
                        </tr>
                        {{for ge in ges['ssp']:}}
-                          {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
+                          {{=TR(TD(ge['subject'], _class='subjects ge', _title=ge['title'] + '|'+ ge['description']), TD(ge['sem'], _class='subjects'))}}    
                        {{pass}}                                
                     </table>
                     * you need at least 15 units                            
@@ -408,7 +408,7 @@ I'll try to figure out what happened. :)
                           <th>Semester Taken</th>
                        </tr>
                        {{for ge in ges['mst']:}}
-                          {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
+                          {{=TR(TD(ge['subject'], _class='subjects ge', _title=ge['title'] + '|'+ ge['description']), TD(ge['sem'], _class='subjects'))}}    
                        {{pass}}
                     </table>
                     * if EEE, you need at least 9 units

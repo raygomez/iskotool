@@ -198,7 +198,7 @@ if($('.semester')){
         }
     })
     
-    $('td.ge').cluetip({
+    $('td.ge_not_taken').cluetip({
         splitTitle: '|',
         cursor: 'pointer',
         arrows: 'true',
@@ -207,7 +207,6 @@ if($('.semester')){
             open:       'show', // can be 'show' or 'slideDown' or 'fadeIn'
             openSpeed:  ''        
         },
-        width: 'auto',
     });
 }
 })
@@ -384,7 +383,7 @@ I'll try to figure out what happened. :)
                           <th>Semester Taken</th>
                        </tr>
                        {{for ge in ges['ah']:}}
-                          {{=TR(TD(ge['subject'], _class='subjects ge', _title=ge['title'] + '|'+ ge['description']), TD(ge['sem'], _class='subjects'))}}    
+                          {{=TR(TD(ge['subject'], _class='subjects subj', _title='Basic College English|Basic grammar, usage & composition skills in English.'), TD(ge['sem'], _class='subjects'))}}    
                        {{pass}}                                
                     </table>
                     * you need at least 15 units
@@ -396,7 +395,7 @@ I'll try to figure out what happened. :)
                           <th>Semester Taken</th>
                        </tr>
                        {{for ge in ges['ssp']:}}
-                          {{=TR(TD(ge['subject'], _class='subjects ge', _title=ge['title'] + '|'+ ge['description']), TD(ge['sem'], _class='subjects'))}}    
+                          {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
                        {{pass}}                                
                     </table>
                     * you need at least 15 units                            
@@ -408,7 +407,7 @@ I'll try to figure out what happened. :)
                           <th>Semester Taken</th>
                        </tr>
                        {{for ge in ges['mst']:}}
-                          {{=TR(TD(ge['subject'], _class='subjects ge', _title=ge['title'] + '|'+ ge['description']), TD(ge['sem'], _class='subjects'))}}    
+                          {{=TR(TD(ge['subject'], _class='subjects'), TD(ge['sem'], _class='subjects'))}}    
                        {{pass}}
                     </table>
                     * if EEE, you need at least 9 units
@@ -542,7 +541,7 @@ I'll try to figure out what happened. :)
                          <th>Subject</th>
                       </tr>
                       {{for ge in non_ges['ah']:}}
-                         {{=TR(TD(ge.ge.name, _class='subjects ge', _title=ge.ge.title + '|'+ge.ge.description))}}    
+                         {{=TR(TD(ge.ge.name, _class='subjects ge_not_taken', _title=ge.ge.title + '|'+ge.ge.description))}}    
                       {{pass}}                                
                    </table>
                    * you need at least 15 units
@@ -553,7 +552,7 @@ I'll try to figure out what happened. :)
                          <th>Subject</th>
                       </tr>
                       {{for ge in non_ges['ssp']:}}
-                         {{=TR(TD(ge.ge.name, _class='subjects ge', _title=ge.ge.title + '|'+ge.ge.description))}}    
+                         {{=TR(TD(ge.ge.name, _class='subjects ge_not_taken', _title=ge.ge.title + '|'+ge.ge.description))}}    
                       {{pass}}                                
                    </table>
                    * you need at least 15 units                            
@@ -564,7 +563,7 @@ I'll try to figure out what happened. :)
                          <th>Subject</th>
                       </tr>
                       {{for ge in non_ges['mst']:}}
-                         {{=TR(TD(ge.ge.name, _class='subjects ge', _title=ge.ge.title + '|'+ge.ge.description))}}    
+                         {{=TR(TD(ge.ge.name, _class='subjects ge_not_taken', _title=ge.ge.title + '|'+ge.ge.description))}}    
                       {{pass}}                                                                
                    </table>
                    * if EEE, you need at least 9 units
