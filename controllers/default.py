@@ -157,12 +157,12 @@ def parse_subjects(mygrades, info, mycourse, myyear):
 
                     ge = ges_mst.find(lambda row: row.ge.name == subject['subject']).first()                 
                     if ge is not None: 
-                        taken_mst.append({'subject':subject['subject'], 'sem':semester, 'title':ge.ge.title, 'description':ge.ge.description})                    
+                        taken_msts.append({'subject':subject['subject'], 'sem':semester, 'title':ge.ge.title, 'description':ge.ge.description})                    
                         taken_mst.append(subject['subject'])
 
                     ge = ges_ssp.find(lambda row: row.ge.name == subject['subject']).first()                                    
                     if ge is not None: 
-                        taken_ssp.append({'subject':subject['subject'], 'sem':semester, 'title':ge.ge.title, 'description':ge.ge.description})                    
+                        taken_ssps.append({'subject':subject['subject'], 'sem':semester, 'title':ge.ge.title, 'description':ge.ge.description})                    
                         taken_ssp.append(subject['subject'])
                         
                     if len(ges_phil_stud.find(lambda row: row.name == subject['subject'])) != 0: 
