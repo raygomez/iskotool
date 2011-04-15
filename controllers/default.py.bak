@@ -79,9 +79,9 @@ def parse_subjects(mygrades, info, mycourse, myyear):
     
     if myyear == '0':
         studno = int(info['studno'][:4])
-        year = filter(lambda x: x >= studno, my_syllabus)
+        year = filter(lambda x: x <= studno, my_syllabus)
         if year is not None:
-            syllabus = db(db.syllabus.year == year[0]).select().first()
+            syllabus = db(db.syllabus.year == min(year)).select().first()
         else: return 'too old',None,None,None,None,None,None
 
     else: syllabus = db(db.syllabus.year == int(my_syllabus[int(myyear)-1])).select().first()
