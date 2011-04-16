@@ -9,24 +9,64 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
+from HTMLParser import HTMLParser
+from re import sub
+from sys import stderr
+from traceback import print_exc
+
+class _DeHTMLParser(HTMLParser):
+    def __init__(self):
+        HTMLParser.__init__(self)
+        self.__text = []
+
+    def handle_data(self, data):       
+        text = data.strip()
+        if len(text) > 0:
+            self.__text.append(text)
+
+    def handle_starttag(self, tag, attrs):
+        if tag == 'br':
+            self.__text.append('\n')
+        if tag == 'h2':
+            self.__text.append('\n')
+        if tag == 'td':
+            if self.__text[-1] != '\n': 
+                self.__text.append('\t')
+            
+    def handle_endtag(self, tag):            
+        if tag == 'tr':
+            self.__text.append('\n')
+
+    def text(self):
+        return ''.join(self.__text).strip()
+
+def dehtml(text):
+    try:
+        parser = _DeHTMLParser()
+        parser.feed(text)
+        parser.close()
+        return parser.text()
+    except:
+        print_exc(file=stderr)
+        return text
 
 def index():
     """
     example action using the internationalization operator T and flash
     rendered by views/default/index.html or views/generic.html
     """
+    import urllib    
     
     courses = db(db.course.id > 0).select()
     my_course = ['Autodetect course']
     for course in courses:
         my_course.append(course.course)
     
-    
     syllabi = db(db.syllabus.id > 0).select()
     my_syllabus = ['Autodetect syllabus']
     for syllabus in syllabi:
         my_syllabus.append(syllabus.year)
-    
+
     form = SQLFORM.factory(
         Field('grades', 'text', label='Grades', requires=IS_NOT_EMPTY()),
         Field('course', 'list:string', requires=IS_IN_SET(range(len(my_course)),labels=my_course, zero=None)),
@@ -45,7 +85,14 @@ def index():
     ges = None
     non_ges = None
     course = None
-        
+
+    if request.vars.bookmark:
+        text = dehtml(urllib.unquote(request.vars.bookmark))
+        form.vars.grades = text
+        info,mygrades = parse(text)
+        if info != 'Error': 
+            mysubjects,year,pes,cwts,ges,non_ges,course= parse_subjects(mygrades, info, '0', '0')
+            
     if form.accepts(request.vars, session, formname='form_one'):
         info,mygrades = parse(form.vars.grades)
         if info != 'Error': 
@@ -79,13 +126,22 @@ def parse_subjects(mygrades, info, mycourse, myyear):
     
     if myyear == '0':
         studno = int(info['studno'][:4])
+        syllabi = db(db.subject_course.course == course.id).select(db.subject_course.year, distinct=True)
+        my_syllabus = []
+        for syllabus in syllabi:
+            my_syllabus.append(syllabus.year.year)
+        
         year = filter(lambda x: x <= studno, my_syllabus)
         if year is not None:
             syllabus = db(db.syllabus.year == max(year)).select().first()
         else: return 'too old',None,None,None,None,None,None
 
-    else: syllabus = db(db.syllabus.year == int(my_syllabus[int(myyear)-1])).select().first()
-    
+    else: 
+        syllabus = db(db.syllabus.year == int(my_syllabus[int(myyear)-1])).select().first()
+        
+        if len(db((db.subject_course.course == course.id) & (db.subject_course.year == syllabus.id)).select()) == 0:
+            return 'not supported',None,None,None,None,None,None
+        
     majors = db((db.subject_course.course == course.id) & (db.subject_course.year == syllabus.id))._select(db.subject_course.subject)
     
     major_subjects = db(db.subject.id.belongs(majors)).select()
@@ -132,6 +188,7 @@ def parse_subjects(mygrades, info, mycourse, myyear):
             if subject['subject'] == 'Soc Sci I': subject['subject'] = 'Soc Sci 1'   #Fixed for Soc Sci I
             if subject['subject'] == 'Soc Sci II': subject['subject'] = 'Soc Sci 2'   #Fixed for Soc Sci II
             if subject['subject'] == 'Comm 3 Eng': subject['subject'] = 'Comm 3'   #Fixed for Comm 3
+            if subject['subject'] == 'Humanidades 1': subject['subject'] = 'Humad 1' #Fixed for Humad 1
 
             blank = subject['grade'] == ''
             fail = '5.00' in subject['grade']
@@ -246,9 +303,7 @@ def parse_subjects(mygrades, info, mycourse, myyear):
     return mysubjects, syllabus.year, taken_pes, taken_cwts, taken_ges, not_taken_ges, course.course
     
 def parse(grades):
-    
     index = grades.find('View Grades')
-    
     if index == -1: return 'Error',None
     grades = grades[index:]
     lines = grades.splitlines()
@@ -256,7 +311,7 @@ def parse(grades):
     if 'Load another student' in lines[1]: del lines[1]
 
     if len(lines) < 5: return 'Error',None
-            
+                    
     name, studno, course = lines[1:4]
     
     info = {}
@@ -265,7 +320,7 @@ def parse(grades):
     info['course'] = course
     
     mygrades = []
-    
+        
     more_than_one = 0
     for line in lines[5:]:
         if 'Summer' in line or 'Semester' in line:
@@ -280,51 +335,15 @@ def parse(grades):
                 more_than_one = 0
         elif 'Class Code' in line: continue
         elif len(line) == 0: continue
-        elif 'Notice' in line: break
-        elif 'Unresolved INC or 4.00' in line: break
+        elif 'NOTICE' in line: break
+        elif 'Unresolved INC or 4.00' in line: break        
         else:
             l = line.split('\t')
             if len(l) == 3:
                 subj = l[1][:l[1].rfind(' ')]
                 mygrades[-1]['subject'].append({'subject':subj})
                 more_than_one = 1
-
             elif len(l) == 6:
                 subj,unit, grade = l[1][:l[1].strip().rfind(' ')],l[-3], l[-2] 
                 mygrades[-1]['subject'].append({'subject':subj,'unit':unit,'grade':grade})
-        
     return info, mygrades
-
-#def user():
-    """
-    exposes:
-    http://..../[app]/default/user/login
-    http://..../[app]/default/user/logout
-    http://..../[app]/default/user/register
-    http://..../[app]/default/user/profile
-    http://..../[app]/default/user/retrieve_password
-    http://..../[app]/default/user/change_password
-    use @auth.requires_login()
-        @auth.requires_membership('group name')
-        @auth.requires_permission('read','table name',record_id)
-    to decorate functions that need access control
-    """
-#    return dict(form=auth())
-
-#def download():
-    """
-    allows downloading of uploaded files
-    http://..../[app]/default/download/[filename]
-    """
-#    return response.download(request,db)
-
-
-#def call():
-    """
-    exposes services. for example:
-    http://..../[app]/default/call/jsonrpc
-    decorate with @services.jsonrpc the functions to expose
-    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
-    """
-#    session.forget()
-#    return service()`

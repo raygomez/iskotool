@@ -111,8 +111,8 @@ db.define_table(
 db.define_table(
     'subject_course',
     Field('subject', db.subject, notnull=True),
-    Field('course', db.course, notnull=True, default=2),
-    Field('year', db.syllabus, default=3)
+    Field('course', db.course, notnull=True, default=4),
+    Field('year', db.syllabus, default=2)
 )
 db.subject_course.subject.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
 db.subject_course.course.requires=IS_IN_DB(db, 'course.id', '%(course)s')

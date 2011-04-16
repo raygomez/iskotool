@@ -90,27 +90,27 @@ $total_units = 0
    $total_gwa = Math.round($total/$total_units * 1000)/1000
    $total_gwa = $total_gwa.toFixed(3)
 
-   $('#total_gwa').html('<p>Total: <label>'+$total_gwa +'</label></p>')
-   $('#total_units').html('<p>Total: <label>'+$total_units+'</label> units</p>')
-   if($total_gwa <= 1.20) $('#congrats').html('<b>Summa cum laude: Congrats! Astig</b>');
-   else if($total_gwa <= 1.45)$('#congrats').html('<b>Magna cum laude: Congrats! Astig</b>');
-   else if($total_gwa <= 1.75)$('#congrats').html('<b>Cum laude: Congrats! Astig</b>');
-   else $('#congrats').html('');
+   $('.total_gwa').html('<p>GWA: <label>'+$total_gwa +'</label></p>')
+   $('.total_units').html('<p>Total: <label>'+$total_units+'</label> units</p>')
+   if($total_gwa <= 1.20) $('.congrats').html('<b>Summa cum laude: Congrats! Astig</b>');
+   else if($total_gwa <= 1.45)$('.congrats').html('<b>Magna cum laude: Congrats! Astig</b>');
+   else if($total_gwa <= 1.75)$('.congrats').html('<b>Cum laude: Congrats! Astig</b>');
+   else $('.congrats').html('');
 
    if($total_gwa > 1.20){
       grade = Math.ceil(($total - 1.2*$total_units)/0.2);
-      $('#summa').html('You need to ace ' + grade +' units to become a <i>summa cum laude</i>.');  
-   } else $('#summa').html('');
+      $('.summa').html('You need to ace ' + grade +' units to become a <i>summa cum laude</i>.');  
+   } else $('.summa').html('');
  
    if ($total_gwa > 1.45){ 
       grade = Math.ceil(($total - 1.45*$total_units)/0.45);
-      $('#magna').html('You need to ace ' + grade +' units to become a <i>magna cum laude</i>.');
-   } else {$('#magna').html('')}
+      $('.magna').html('You need to ace ' + grade +' units to become a <i>magna cum laude</i>.');
+   } else {$('.magna').html('')}
    
    if ($total_gwa > 1.75){ 
       grade = Math.ceil(($total - 1.75*$total_units)/0.75);
-      $('#cum').html('You need to ace ' + grade +' units to become a <i>cum laude</i>.');
-   } else {$('#cum').html('');}
+      $('.cum').html('You need to ace ' + grade +' units to become a <i>cum laude</i>.');
+   } else {$('.cum').html('');}
    }
 }
 
@@ -251,6 +251,16 @@ I'll try to figure out what happened. :)
   </ul>
   <div id="tabs-1">
      Click the grades to edit.
+     <br/>
+     <br/>
+     <div class='congrats'></div>
+     <div class='summa'></div>
+     <div class='magna'></div>
+     <div class='cum'></div> 
+     <br/>
+     <div class='total_gwa'></div>
+     <div class='total_units'></div>
+     
      <table>
         <tr><td>
            <table>
@@ -271,12 +281,12 @@ I'll try to figure out what happened. :)
         </td></tr>
      </table>
      <br/>
-     <div id='total_gwa'></div>
-     <div id='total_units'></div>
-     <div id='congrats'></div>
-     <div id='summa'></div>
-     <div id='magna'></div>
-     <div id='cum'></div> 
+     <div class='total_gwa'></div>
+     <div class='total_units'></div>
+     <div class='congrats'></div>
+     <div class='summa'></div>
+     <div class='magna'></div>
+     <div class='cum'></div> 
   </div>
   <div id="tabs-2">
      {{if type(mysubjects) != str:}}        
