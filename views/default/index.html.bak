@@ -90,27 +90,27 @@ $total_units = 0
    $total_gwa = Math.round($total/$total_units * 1000)/1000
    $total_gwa = $total_gwa.toFixed(3)
 
-   $('#total_gwa').html('<p>Total: <label>'+$total_gwa +'</label></p>')
-   $('#total_units').html('<p>Total: <label>'+$total_units+'</label> units</p>')
-   if($total_gwa <= 1.20) $('#congrats').html('<b>Summa cum laude: Congrats! Astig</b>');
-   else if($total_gwa <= 1.45)$('#congrats').html('<b>Magna cum laude: Congrats! Astig</b>');
-   else if($total_gwa <= 1.75)$('#congrats').html('<b>Cum laude: Congrats! Astig</b>');
-   else $('#congrats').html('');
+   $('.total_gwa').html('<p>GWA: <label>'+$total_gwa +'</label></p>')
+   $('.total_units').html('<p>Total: <label>'+$total_units+'</label> units</p>')
+   if($total_gwa <= 1.20) $('.congrats').html('<b>Summa cum laude: Congrats! Astig</b>');
+   else if($total_gwa <= 1.45)$('.congrats').html('<b>Magna cum laude: Congrats! Astig</b>');
+   else if($total_gwa <= 1.75)$('.congrats').html('<b>Cum laude: Congrats! Astig</b>');
+   else $('.congrats').html('');
 
    if($total_gwa > 1.20){
       grade = Math.ceil(($total - 1.2*$total_units)/0.2);
-      $('#summa').html('You need to ace ' + grade +' units to become a <i>summa cum laude</i>.');  
-   } else $('#summa').html('');
+      $('.summa').html('You need to ace ' + grade +' units to become a <i>summa cum laude</i>.');  
+   } else $('.summa').html('');
  
    if ($total_gwa > 1.45){ 
       grade = Math.ceil(($total - 1.45*$total_units)/0.45);
-      $('#magna').html('You need to ace ' + grade +' units to become a <i>magna cum laude</i>.');
-   } else {$('#magna').html('')}
+      $('.magna').html('You need to ace ' + grade +' units to become a <i>magna cum laude</i>.');
+   } else {$('.magna').html('')}
    
    if ($total_gwa > 1.75){ 
       grade = Math.ceil(($total - 1.75*$total_units)/0.75);
-      $('#cum').html('You need to ace ' + grade +' units to become a <i>cum laude</i>.');
-   } else {$('#cum').html('');}
+      $('.cum').html('You need to ace ' + grade +' units to become a <i>cum laude</i>.');
+   } else {$('.cum').html('');}
    }
 }
 
@@ -211,14 +211,19 @@ if($('.semester')){
     });
 }
 })
+<button onclick="jQuery('#contactme').slideToggle()">Comment</button>
+<div id='contactme' class='hidden'>{{=contactme}}</div>
 
 </script>
 Another GWA Calculator + EEE Online Advising + GE Lister v1.0
 <br/>
 <br/>
+<button onclick="jQuery('#instruction').slideToggle()">Click me for the instructions.</button>
+<div id='instruction' class='hidden'>
 <h2>Instructions:</h2><sup>[patterned from {{=A('this', _href='http://www.upprogrammingguild.org/gwacalc/gwacalc_old.php')}}]</sup><br/>
+<h4>Option 1</h4>
 <ol>
-<li>Go to the CRS, and view your grades.</li>
+<li>Go to {{=A('https://crs.upd.edu.ph/viewgrades', _href='https://crs.upd.edu.ph/viewgrades')}}.</li>
 <li>Press ctrl+A (or equivalent) to select all text on the page.</li>
 <li>Press ctrl+C (or equivalent) to copy all text.</li>
 <li>Paste it in the text area.</li>
@@ -228,6 +233,18 @@ Another GWA Calculator + EEE Online Advising + GE Lister v1.0
 I'll try to figure out what happened. :)
 </li>
 </ol>
+<h4>Option 2</h4>
+<ol>
+<li>Bookmark {{=A('Iskotool', _href= "javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://localhost:8000/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');")}}. You can drag the link and drop it in the Bookmark toolbar.</li>
+<li>Go to {{=A('https://crs.upd.edu.ph/viewgrades', _href='https://crs.upd.edu.ph/viewgrades')}}.</li>
+<li>Click the bookmark you made.</li>
+</ol>
+<h4>Option 3</h4>
+<ol>
+<li>Go to {{=A('https://crs.upd.edu.ph/viewgrades', _href='https://crs.upd.edu.ph/viewgrades')}}.</li>
+<li>Paste the following in your address bar:</li> {{=INPUT(_value="javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://localhost:8000/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');")}}
+</ol>
+</div>
 <br/>
 <br/>
 {{=form}}
@@ -251,6 +268,16 @@ I'll try to figure out what happened. :)
   </ul>
   <div id="tabs-1">
      Click the grades to edit.
+     <br/>
+     <br/>
+     <div class='congrats'></div>
+     <div class='summa'></div>
+     <div class='magna'></div>
+     <div class='cum'></div> 
+     <br/>
+     <div class='total_gwa'></div>
+     <div class='total_units'></div>
+     
      <table>
         <tr><td>
            <table>
@@ -271,12 +298,12 @@ I'll try to figure out what happened. :)
         </td></tr>
      </table>
      <br/>
-     <div id='total_gwa'></div>
-     <div id='total_units'></div>
-     <div id='congrats'></div>
-     <div id='summa'></div>
-     <div id='magna'></div>
-     <div id='cum'></div> 
+     <div class='total_gwa'></div>
+     <div class='total_units'></div>
+     <div class='congrats'></div>
+     <div class='summa'></div>
+     <div class='magna'></div>
+     <div class='cum'></div> 
   </div>
   <div id="tabs-2">
      {{if type(mysubjects) != str:}}        
@@ -648,6 +675,7 @@ For interested developers, click {{=A('this', _href='https://code.google.com/p/i
 
 <h4>Changelogs:</h4>
 <i>April 15,2011</i>: Added tooltips to give provide the course title and description of a GE.
+<br/>
 <br/>
 
 <h4>Disclaimer:</h4>

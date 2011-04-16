@@ -211,14 +211,19 @@ if($('.semester')){
     });
 }
 })
+<button onclick="jQuery('#contactme').slideToggle()">Comment</button>
+<div id='contactme' class='hidden'>{{=contactme}}</div>
 
 </script>
 Another GWA Calculator + EEE Online Advising + GE Lister v1.0
 <br/>
 <br/>
-<h2>Instructions:</h2><sup>[patterned from {{=A('this', _href='http://www.upprogrammingguild.org/gwacalc/gwacalc_old.php')}}]</sup><br/>
+<button onclick="jQuery('#instruction').slideToggle()">Click me for the instructions.</button>
+<div id='instruction' class='hidden'>
+<h2>Instructions:</h2><sup>[patterned from {{=A('this', _href='http://www.upprogrammingguild.org/gwacalc.php')}}]</sup><br/>
+<h4>Option 1</h4>
 <ol>
-<li>Go to the CRS, and view your grades.</li>
+<li>Go to {{=A('https://crs.upd.edu.ph/viewgrades', _href='https://crs.upd.edu.ph/viewgrades')}}.</li>
 <li>Press ctrl+A (or equivalent) to select all text on the page.</li>
 <li>Press ctrl+C (or equivalent) to copy all text.</li>
 <li>Paste it in the text area.</li>
@@ -228,6 +233,18 @@ Another GWA Calculator + EEE Online Advising + GE Lister v1.0
 I'll try to figure out what happened. :)
 </li>
 </ol>
+<h4>Option 2</h4>
+<ol>
+<li>Bookmark {{=A('Iskotool', _href= "javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://localhost:8000/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');")}}. You can drag the link and drop it in the Bookmark toolbar.</li>
+<li>Go to {{=A('https://crs.upd.edu.ph/viewgrades', _href='https://crs.upd.edu.ph/viewgrades')}}.</li>
+<li>Click the bookmark you made.</li>
+</ol>
+<h4>Option 3</h4>
+<ol>
+<li>Go to {{=A('https://crs.upd.edu.ph/viewgrades', _href='https://crs.upd.edu.ph/viewgrades')}}.</li>
+<li>Paste the following in your address bar:</li> {{=INPUT(_value="javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://localhost:8000/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');")}}
+</ol>
+</div>
 <br/>
 <br/>
 {{=form}}
