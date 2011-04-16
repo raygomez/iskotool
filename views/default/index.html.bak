@@ -215,6 +215,7 @@ if($('.semester')){
 
 Another GWA Calculator + EEE Online Advising + GE Lister v1.25 <br/>
 + 2004+ IE Online Advising  <i>(Experimental)</i>
++ 2009+ ChE Online Advising <i>(Experimental)</i>
 <br/>
 <br/>
 <button onclick="jQuery('#instruction').slideToggle()">Click me for the instructions.</button>
@@ -243,7 +244,7 @@ I'll try to figure out what happened. :)
 <h4>Option 3</h4>
 <ol>
 <li>Go to {{=A('https://crs.upd.edu.ph/viewgrades', _href='https://crs.upd.edu.ph/viewgrades')}}.</li>
-<li>Paste the following in your address bar:</li> {{=TEXTAREA("javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://bbs.eee.upd.edu.ph/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');", _cols=20, _rows=5, _wrap='hard', readonly='true' )}}
+<li>Paste the following in your address bar:</li> {{=TEXTAREA("javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://bbs.eee.upd.edu.ph/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');", _cols=20, _rows=5, _wrap='hard', _readonly='true' )}}
 </ol>
 <br/>
 </div>
@@ -676,9 +677,10 @@ For interested developers, click {{=A('this', _href='https://code.google.com/p/i
 <br/>
 
 <h4>Changelogs:</h4>
+<i>April 16,2011</i>: Added ChE 2009+ curriculum.<br/>
 <i>April 16,2011</i>: Added IE 2004+ curriculum.<br/>
 <i>April 16,2011</i>: Added support for Bookmark Javascript scripts. Credits to Jaymari Chua for the suggestion.<br/>
-<i>April 15,2011</i>: Added tooltips to give provide the course title and description of a GE. Credits to Katrina Anne Riman for the suggestion.
+<i>April 15,2011</i>: Added tooltips to provide the course title and description of a GE. Credits to Katrina Anne Riman for the suggestion.
 <br/>
 <br/>
 
