@@ -211,11 +211,10 @@ if($('.semester')){
     });
 }
 })
-<button onclick="jQuery('#contactme').slideToggle()">Comment</button>
-<div id='contactme' class='hidden'>{{=contactme}}</div>
-
 </script>
-Another GWA Calculator + EEE Online Advising + GE Lister v1.0
+
+Another GWA Calculator + EEE Online Advising + GE Lister v1.25 <br/>
++ 2004+ IE Online Advising  <i>(Experimental)</i>
 <br/>
 <br/>
 <button onclick="jQuery('#instruction').slideToggle()">Click me for the instructions.</button>
@@ -233,17 +232,20 @@ Another GWA Calculator + EEE Online Advising + GE Lister v1.0
 I'll try to figure out what happened. :)
 </li>
 </ol>
+<br/>
 <h4>Option 2</h4>
 <ol>
-<li>Bookmark {{=A('Iskotool', _href= "javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://localhost:8000/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');")}}. You can drag the link and drop it in the Bookmark toolbar.</li>
+<li>Bookmark {{=A('Iskotool', _href= "javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://bbs.eee.upd.edu.ph/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');")}}. You can drag the link and drop it in the Bookmark toolbar.</li>
 <li>Go to {{=A('https://crs.upd.edu.ph/viewgrades', _href='https://crs.upd.edu.ph/viewgrades')}}.</li>
 <li>Click the bookmark you made.</li>
 </ol>
+<br/>
 <h4>Option 3</h4>
 <ol>
 <li>Go to {{=A('https://crs.upd.edu.ph/viewgrades', _href='https://crs.upd.edu.ph/viewgrades')}}.</li>
-<li>Paste the following in your address bar:</li> {{=INPUT(_value="javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://localhost:8000/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');")}}
+<li>Paste the following in your address bar:</li> {{=TEXTAREA("javascript:if(String(window.location).substr(0,33)=='https://crs.upd.edu.ph/viewgrades')$.getScript('http://bbs.eee.upd.edu.ph/iskotool/static/js/bookmark.js');else alert('You must be at https://crs.upd.edu.ph/viewgrades to use this.');", _cols=20, _rows=5, _wrap='hard', readonly='yes' )}}
 </ol>
+<br/>
 </div>
 <br/>
 <br/>
@@ -680,6 +682,7 @@ For interested developers, click {{=A('this', _href='https://code.google.com/p/i
 
 <h4>Disclaimer:</h4>
 This should not be used in place of official documents pertaining to the student's academic performance nor should it be regarded as an authoritative guide on the student's curriculum.<sup>[patterned from {{=A('this', _href='https://crs.upd.edu.ph/viewgrades')}}]</sup><br/>
+This has not been tested and will not be tested in IE<br/>
 <br/>
 <h4>Feedback:</h4>
 In case you find errors on the output of this site or you want to request some features.<br/>

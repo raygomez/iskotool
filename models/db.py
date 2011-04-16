@@ -92,21 +92,23 @@ db.define_table(
 )
 
 db.define_table(
+    'course',
+    Field('course', notnull=True),
+    format='%(course)s'    
+)
+
+db.define_table(
     'prerequisites',
     Field('prereq', db.subject, notnull=True),
     Field('subject', db.subject, notnull=True),
-    Field('year', db.syllabus, default=3),
+    Field('year', db.syllabus, default=2),
+    Field('course', 'list:reference db.course', default='4')    
 )
 
 db.prerequisites.prereq.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
 db.prerequisites.subject.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
 db.prerequisites.year.requires=IS_IN_DB(db, 'syllabus.id', '%(year)s')
-
-db.define_table(
-    'course',
-    Field('course', notnull=True),
-    format='%(course)s'    
-)
+db.prerequisites.course.requires = IS_IN_DB(db,'course.id',db.course._format,multiple=True)
 
 db.define_table(
     'subject_course',
@@ -122,11 +124,13 @@ db.define_table(
     'corequisites',
     Field('coreq', db.subject, notnull=True),
     Field('subject', db.subject, notnull=True),
-    Field('year', db.syllabus, default=3),    
+    Field('year', db.syllabus, default=2),    
+    Field('course', 'list:reference db.course', default='4')
 )
 db.corequisites.coreq.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
 db.corequisites.subject.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
 db.corequisites.year.requires=IS_IN_DB(db, 'syllabus.id', '%(year)s')
+db.corequisites.course.requires=IS_IN_DB(db, 'course.id',db.course._format,multiple=True)
 
 
 db.define_table(

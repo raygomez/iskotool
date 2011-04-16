@@ -1,18 +1,22 @@
 (dp1
-S'prereq'
+S'course'
 p2
-S'INTEGER REFERENCES subject(id) ON DELETE CASCADE'
+S'TEXT'
 p3
-sS'year'
+sS'prereq'
 p4
-S'INTEGER REFERENCES syllabus(id) ON DELETE CASCADE'
-p5
-sS'id'
-p6
-S'INTEGER PRIMARY KEY AUTOINCREMENT'
-p7
-sS'subject'
-p8
 S'INTEGER REFERENCES subject(id) ON DELETE CASCADE'
+p5
+sS'subject'
+p6
+S'INTEGER REFERENCES subject(id) ON DELETE CASCADE'
+p7
+sS'id'
+p8
+S'INTEGER PRIMARY KEY AUTOINCREMENT'
 p9
+sS'year'
+p10
+S'INTEGER REFERENCES syllabus(id) ON DELETE CASCADE'
+p11
 s.

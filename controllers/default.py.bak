@@ -1,14 +1,6 @@
 # -*- coding: utf-8 -*-
 # this file is released under public domain and you can use without limitations
 
-#########################################################################
-## This is a samples controller
-## - index is the default action of any application
-## - user is required for authentication and authorization
-## - download is for downloading files uploaded in the db (does streaming)
-## - call exposes all registered services (none by default)
-#########################################################################
-
 from HTMLParser import HTMLParser
 from re import sub
 from sys import stderr
@@ -51,10 +43,6 @@ def dehtml(text):
         return text
 
 def index():
-    """
-    example action using the internationalization operator T and flash
-    rendered by views/default/index.html or views/generic.html
-    """
     import urllib    
     
     courses = db(db.course.id > 0).select()
@@ -146,8 +134,8 @@ def parse_subjects(mygrades, info, mycourse, myyear):
     
     major_subjects = db(db.subject.id.belongs(majors)).select()
     require = db(db.subject_requirements.id > 0).select()
-    prereqs = db(db.prerequisites.year == syllabus.id).select()    
-    coreqs = db(db.corequisites.year == syllabus.id).select()
+    prereqs = db((db.prerequisites.year == syllabus.id) & (db.prerequisites.course.contains(course.id))).select()    
+    coreqs = db(db.corequisites.year == syllabus.id & (db.corequisites.course.contains(course.id))).select()
     
     ges_domain = db(db.ge_domain.id > 0)._select(db.ge_domain.ge)
     ah = db(db.domains.domain == 'AH').select().first()

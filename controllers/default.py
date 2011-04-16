@@ -134,8 +134,8 @@ def parse_subjects(mygrades, info, mycourse, myyear):
     
     major_subjects = db(db.subject.id.belongs(majors)).select()
     require = db(db.subject_requirements.id > 0).select()
-    prereqs = db(db.prerequisites.year == syllabus.id).select()    
-    coreqs = db(db.corequisites.year == syllabus.id).select()
+    prereqs = db((db.prerequisites.year == syllabus.id) & (db.prerequisites.course.contains(course.id))).select()    
+    coreqs = db((db.corequisites.year == syllabus.id) & (db.corequisites.course.contains(course.id))).select()
     
     ges_domain = db(db.ge_domain.id > 0)._select(db.ge_domain.ge)
     ah = db(db.domains.domain == 'AH').select().first()
