@@ -1,14 +1,18 @@
 (dp1
-S'requirements'
+S'course'
 p2
-S'CHAR(512) NOT NULL'
+S'TEXT'
 p3
-sS'id'
+sS'requirements'
 p4
-S'INTEGER PRIMARY KEY AUTOINCREMENT'
+S'CHAR(512) NOT NULL'
 p5
-sS'subject'
+sS'id'
 p6
-S'INTEGER REFERENCES subject(id) ON DELETE CASCADE'
+S'INTEGER PRIMARY KEY AUTOINCREMENT'
 p7
+sS'subject'
+p8
+S'INTEGER REFERENCES subject(id) ON DELETE CASCADE'
+p9
 s.

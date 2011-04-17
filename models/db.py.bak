@@ -101,8 +101,8 @@ db.define_table(
     'prerequisites',
     Field('prereq', db.subject, notnull=True),
     Field('subject', db.subject, notnull=True),
-    Field('year', db.syllabus, default=4),
-    Field('course', 'list:reference db.course', default='5')    
+    Field('year', db.syllabus, default=5),
+    Field('course', 'list:reference db.course', default='7')    
 )
 
 db.prerequisites.prereq.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
@@ -113,8 +113,8 @@ db.prerequisites.course.requires = IS_IN_DB(db,'course.id',db.course._format,mul
 db.define_table(
     'subject_course',
     Field('subject', db.subject, notnull=True),
-    Field('course', db.course, notnull=True, default=5),
-    Field('year', db.syllabus, default=4)
+    Field('course', db.course, notnull=True, default=7),
+    Field('year', db.syllabus, default=5)
 )
 db.subject_course.subject.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
 db.subject_course.course.requires=IS_IN_DB(db, 'course.id', '%(course)s')
@@ -124,33 +124,20 @@ db.define_table(
     'corequisites',
     Field('coreq', db.subject, notnull=True),
     Field('subject', db.subject, notnull=True),
-    Field('year', db.syllabus, default=2),    
-    Field('course', 'list:reference db.course', default='4')
+    Field('year', db.syllabus, default=5),    
+    Field('course', 'list:reference db.course', default='7')
 )
 db.corequisites.coreq.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
 db.corequisites.subject.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
 db.corequisites.year.requires=IS_IN_DB(db, 'syllabus.id', '%(year)s')
 db.corequisites.course.requires=IS_IN_DB(db, 'course.id',db.course._format,multiple=True)
 
-
-db.define_table(
-    'category',
-    Field('label', notnull=True),
-)
-
-db.define_table(
-    'subject_category',
-    Field('subject', db.subject, notnull=True),
-    Field('category', db.category, notnull=True),
-)
-
 db.define_table(
     'subject_requirements',
     Field('subject', db.subject, notnull=True),
     Field('requirements', notnull=True),
 )
-db.subject_category.subject.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
-db.subject_category.category.requires=IS_IN_DB(db, 'category.id', '%(label)s')
+db.subject_requirements.subject.requires=IS_IN_DB(db, 'subject.id', '%(name)s')
 
 db.define_table(
     'comments',
@@ -185,4 +172,12 @@ db.define_table(
     'english',
     Field('ge', db.subject, notnull=True),
 )
+
+db.define_table(
+    'retention',
+    Field('rules', 'text', notnull=True),
+    Field('course', 'list:reference db.course', default='7')
+)
+db.retention.course.requires = IS_IN_DB(db,'course.id',db.course._format,multiple=True)
+
 db.english.ge.requires = IS_IN_DB(db, 'subject.id', '%(name)s')

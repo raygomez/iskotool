@@ -214,9 +214,10 @@ if($('.semester')){
 </script>
 
 Another GWA Calculator + EEE Online Advising + GE Lister v1.25 <br/>
-+ 2004+ IE Online Advising  <i>(Experimental)</i>
-+ 2009+ ChE Online Advising <i>(Experimental)</i>
-<br/>
++ 2004+ IE Online Advising  <i>(Experimental)</i> <br/>
++ 2009+ ChE Online Advising <i>(Experimental)</i> <br/>
++ coming soon! if you want us to support your course, provide a link of the complete syllabus in the Feedback Section.<br/>
+
 <br/>
 <button onclick="jQuery('#instruction').slideToggle()">Click me for the instructions.</button>
 <div id='instruction' class='hidden'>
@@ -317,7 +318,7 @@ I'll try to figure out what happened. :)
            <tr>
               <th>Subjects Eligible</th>
               <th>Subjects Not Eligible</th>
-              <th>Senior/Thesis</th>
+              <th>Senior/Thesis/Others</th>
            </tr>
         </td></tr>
         <tr><td>
@@ -373,18 +374,15 @@ I'll try to figure out what happened. :)
          </td>
        </tr>   
      </table>
+     {{if rules is not None:}}
      <table>        
-        <tr>
+        <tr> 
            <td><h3>Retention Rules</h3>
-              <ol>
-                 <li>Two (2) failures (5, unresolved 4, unresolved INC, drop) in the same Math subject (Math 17, 53, 54 or 55)</li>
-                 <li>Two (2) takes each, of three (3) Math subjects (Math 17, 53, 54 and/or 55)</li>
-                 <li>Two (2) failures (5, unresolved 4, unresolved INC, drop) in the same EEE subject (EEE 31, 33, 35, 23, or 41)</li>
-                 <li>Two (2) takes each, of three (3) EEE subjects (EEE 31, 33, 35, 23 or 41) <sup>[patterned from <a href="http://www.eee.upd.edu.ph/eeeadvising">this</a>]</sup> </li>
-              </ol>               
+           {{=TAG(rules.rules)}}
            </td>
         </tr>
      </table>
+     {{pass}}
      {{else:}}
         {{if 'too old' in mysubjects:}}{{=I('Sorry, you are too old for this.')}}
         {{elif 'not BS' in mysubjects:}}{{=I('Sorry, have you tried setting your course to BS?')}}
@@ -668,7 +666,7 @@ I'll try to figure out what happened. :)
 <br/>
 <br/>
 <h4>About:</h4>
-Another GWA Calculator inspired by Payton Yao's {{=A('GWA Calculator', _href='http://www.upprogrammingguild.org/gwacalc.php')}} and John Benedict Lorenzo's {{=A('GWA Calculator', _href='https://www.facebook.com/notes/john-bennedict-lorenzo/crs-gwa-calculator/194750463878791')}}.<br/>
+Another GWA Calculator is inspired by Payton Yao's {{=A('GWA Calculator', _href='http://www.upprogrammingguild.org/gwacalc.php')}} and John Benedict Lorenzo's {{=A('GWA Calculator', _href='https://www.facebook.com/notes/john-bennedict-lorenzo/crs-gwa-calculator/194750463878791')}}.<br/>
 EEE Online Advising is inspired by Tyrone Tai's {{=A('EEE Advising', _href='http://www.eee.upd.edu.ph/eeeadvising')}}.<br/>
 List of GE subjects can be found {{=A('here', _href='http://www.upd.edu.ph/~our/files/ListofRGEPCourses.pdf')}}.<br/>
 The site do not and will not store any of your information. If unconvinced, see {{=A('this', _href='https://code.google.com/p/iskotool/source/browse/controllers/default.py?spec=svn20cf6fe783043374a9a9ea2a9c70a350ab29fb8d&r=20cf6fe783043374a9a9ea2a9c70a350ab29fb8d')}}.<br/>
@@ -679,8 +677,8 @@ For interested developers, click {{=A('this', _href='https://code.google.com/p/i
 <h4>Changelogs:</h4>
 <i>April 16,2011</i>: Added ChE 2009+ curriculum.<br/>
 <i>April 16,2011</i>: Added IE 2004+ curriculum.<br/>
-<i>April 16,2011</i>: Added support for Bookmark Javascript scripts. Credits to Jaymari Chua for the suggestion.<br/>
-<i>April 15,2011</i>: Added tooltips to provide the course title and description of a GE. Credits to Katrina Anne Riman for the suggestion.
+<i>April 16,2011</i>: Added support for Bookmark Javascript scripts. Credits to Katrina Anne Riman for the suggestion.<br/>
+<i>April 15,2011</i>: Added tooltips to provide the course title and description of a GE. Credits to Jaymari Chua for the suggestion.
 <br/>
 <br/>
 
