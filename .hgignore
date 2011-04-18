@@ -8,3 +8,7 @@ cache/*
 databases/*
 sessions/*
 errors/*
+controllers/*.1
+views/default/*.1
+controllers/*.bak
+views/default/*.bak

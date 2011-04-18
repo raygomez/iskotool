@@ -294,7 +294,7 @@ blockquote {
 
 input[type=text], input[type=password], textarea, select {
     margin: 2px 15px 2px 5px;
-    width: 280px;      
+    width: 350px;      
     background: #fff;
     color: #555;
     border: 1px solid #dedede; 
@@ -553,4 +553,3 @@ a.button:hover span.icon.user { background-position: 0 -869px }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3{ page-break-after: avoid; }
 }
-

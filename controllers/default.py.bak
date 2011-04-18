@@ -84,6 +84,7 @@ def index():
             
     if form.accepts(request.vars, session, formname='form_one'):
         info,mygrades = parse(form.vars.grades)
+
         if info != 'Error': 
             mysubjects,year,pes,cwts,ges,non_ges,course,rules = parse_subjects(mygrades, info, form.vars.course, form.vars.curriculum)
 
@@ -95,12 +96,12 @@ def index():
 
 def parse_subjects(mygrades, info, mycourse, myyear):
 
-    courses = db(db.course.id > 0).select()
+    courses = db(db.course.id > 0).select(orderby=db.course.course)
     my_course = ['Autodetect course']
     for course in courses:
         my_course.append(course.course)
 
-    syllabi = db(db.syllabus.id > 0).select()
+    syllabi = db(db.syllabus.id > 0).select(orderby=db.syllabus.year)
     my_syllabus = []
     for syllabus in syllabi:
         my_syllabus.append(syllabus.year)
@@ -109,8 +110,8 @@ def parse_subjects(mygrades, info, mycourse, myyear):
         course = db(db.course.course == info['course']).select().first()
         if course is None:
             if 'Master ' in info['course']:   
-                return 'not BS',None,None,None,None,None,None        
-            else: return 'not supported',None,None,None,None,None,None
+                return 'not BS',None,None,None,None,None,None,None
+            else: return 'not supported',None,None,None,None,None,None,None
     else: course = db(db.course.course == my_course[int(mycourse)]).select().first()  
     
     if myyear == '0':
@@ -123,13 +124,13 @@ def parse_subjects(mygrades, info, mycourse, myyear):
         year = filter(lambda x: x <= studno, my_syllabus)
         if year is not None:
             syllabus = db(db.syllabus.year == max(year)).select().first()
-        else: return 'too old',None,None,None,None,None,None
+        else: return 'too old',None,None,None,None,None,None,None
 
     else: 
         syllabus = db(db.syllabus.year == int(my_syllabus[int(myyear)-1])).select().first()
         
         if len(db((db.subject_course.course == course.id) & (db.subject_course.year == syllabus.id)).select()) == 0:
-            return 'not supported',None,None,None,None,None,None
+            return 'not supported',None,None,None,None,None,None,None
         
     majors = db((db.subject_course.course == course.id) & (db.subject_course.year == syllabus.id))._select(db.subject_course.subject)
     
@@ -223,9 +224,8 @@ def parse_subjects(mygrades, info, mycourse, myyear):
                         
                 else:
                     taken_non_majors.append({'subject':subject['subject'], 'sem':semester})
-
-    if 'Math 53' in taken_majors and 'Math 17' not in taken_majors:
     
+    if ('Math 53' in taken_majors or 'Math 100' in taken_majors) and 'Math 17' not in taken_majors: #APE
         if len(major_subjects.find(lambda row:row.name == 'Math 17')) != 0: 
             taken_majors.append('Math 17')
             if 'Math 14' in taken_majors: taken_majors.remove('Math 14')
