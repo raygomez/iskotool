@@ -74,6 +74,7 @@ def index():
     non_ges = None
     course = None
     rules = None
+    changelog = db(db.changelog.id > 0).select(orderby=db.changelog.timestamp)
 
     if request.vars.bookmark:
         text = dehtml(urllib.unquote(request.vars.bookmark))
@@ -92,7 +93,7 @@ def index():
         response.flash = 'Thank you for posting.'
         
     return dict(form=form, info=info, mygrades=mygrades, mysubjects=mysubjects, contactme=contactme, 
-                    year=year, pes=pes, cwts=cwts, ges=ges, non_ges=non_ges,course=course,rules=rules)
+                    year=year, pes=pes, cwts=cwts, ges=ges, non_ges=non_ges,course=course,rules=rules, changelog=changelog)
 
 def parse_subjects(mygrades, info, mycourse, myyear):
 
@@ -283,8 +284,11 @@ def parse_subjects(mygrades, info, mycourse, myyear):
             mysubjects['senior'].append({'subject':subject.name, 'requirements':req.requirements})    
         elif len(prereqs.find(lambda row: row.subject == subject.id)) == 0:
             coreq = coreqs.find(lambda row: row.subject == subject.id)
-            
-            if len(coreq): mysubjects['elig'].append({'subject':subject.name, 'coreq':coreq.first().coreq.name})        
+            if len(coreq): 
+                core = []
+                for co in coreq:
+                    core.append(co.coreq.name)
+                mysubjects['elig'].append({'subject':subject.name, 'coreq':', '.join(core)})        
             else: mysubjects['elig'].append({'subject':subject.name, 'coreq':''})        
         else:
             prereq_sub = []
@@ -298,12 +302,19 @@ def parse_subjects(mygrades, info, mycourse, myyear):
             if count == len(prereq):
                 coreq = coreqs.find(lambda row: row.subject == subject.id)
                 
-                if len(coreq): mysubjects['elig'].append({'subject':subject.name, 'coreq':coreq.first().coreq.name})
-                else: mysubjects['elig'].append({'subject':subject.name, 'coreq':''})
+                if len(coreq): 
+                    core = []
+                    for co in coreq:
+                        core.append(co.coreq.name)
+                    mysubjects['elig'].append({'subject':subject.name, 'coreq':','.join(core)})        
+                else: mysubjects['elig'].append({'subject':subject.name, 'coreq':''})                        
             else:
                 coreq = coreqs.find(lambda row: row.subject == subject.id)
                 if len(coreq): 
-                    mysubjects['non_elig'].append({'subject':subject.name, 'prereq':', '.join(prereq_sub), 'coreq':coreq.first().coreq.name})        
+                    core = []
+                    for co in coreq:
+                        core.append(co.coreq.name)                
+                    mysubjects['non_elig'].append({'subject':subject.name, 'prereq':', '.join(prereq_sub), 'coreq':', '.join(core)})        
                 else: mysubjects['non_elig'].append({'subject':subject.name, 'prereq':', '.join(prereq_sub), 'coreq':''})        
                                  
     return mysubjects, syllabus.year, taken_pes, taken_cwts, taken_ges, not_taken_ges, course.course, rules

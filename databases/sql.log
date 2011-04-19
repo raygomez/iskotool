@@ -168,3 +168,10 @@ CREATE TABLE retention(
 success!
 timestamp: 2011-04-17T04:09:59.644348
 ALTER TABLE subject_requirements ADD course TEXT;
+timestamp: 2011-04-19T08:06:28.228545
+CREATE TABLE changelog(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    changelog CHAR(512) NOT NULL,
+    timestamp TIMESTAMP NOT NULL DEFAULT '2011-04-19 08:06:28'
+);
+success!

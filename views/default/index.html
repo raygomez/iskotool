@@ -214,16 +214,23 @@ if($('.semester')){
 </script>
 
 Another GWA Calculator + EEE Online Advising + GE Lister v1.25 <br/>
+<br/>
+<button onclick="jQuery('#courses').slideToggle()">Click me for the supported courses.</button>
+<div id='courses' class='hidden'>
++ 2005+ and 2010+ GE Online Advising  <i>(Experimental)</i> <br/>
++ 2004+ ME Online Advising  <i>(Experimental)</i> <br/>
++ 2006+ CS Online Advising  <i>(Experimental)</i> <br/>
++ 2008+ CE Online Advising  <i>(Experimental)</i> <br/>
 + 2004+ IE Online Advising  <i>(Experimental)</i> <br/>
 + 2009+ ChE Online Advising <i>(Experimental)</i> <br/>
-+ 2002+ Arch Online Advising <i>(Experimental)</i> <br/>
-+ 2002+ L Arch Online Advising <i>(Experimental)</i> <br/>
++ 2002+ Arch and L  Arch Online Advising <i>(Experimental)</i> <br/>
 + 2002+ MBB Online Advising <i>(Experimental and Incomplete)</i> <br/>
 + BAA Online Advising (Initially set to 2007)<i>(Experimental and Incomplete)</i> <br/>
 + BA MBB Online Advising (Initially set to 2007)<i>(Experimental and Incomplete)</i> <br/>
 + [BAA,BA] could someone verify the oldest batch that uses these curricula: {{=A('here', _href='http://www.upd.edu.ph/~cba/acad_ugBSBA.htm')}} and {{=A('here', _href='http://www.upd.edu.ph/~cba/acad_ugBSBAA.htm')}}. Thanks. <br/>
-+ coming soon! if you want us to support your course, provide a link of the complete syllabus in the Feedback Section.<br/>
-
++ coming soon! if you want us to support your course, provide a link of the complete syllabus in the Feedback Section.
+</div> 
+<br/>
 <br/>
 <button onclick="jQuery('#instruction').slideToggle()">Click me for the instructions.</button>
 <div id='instruction' class='hidden'>
@@ -682,12 +689,10 @@ For interested developers, click {{=A('this', _href='https://code.google.com/p/i
 <br/>
 
 <h4>Changelogs:</h4>
-<i>April 18,2011</i>: Added BAA, BA 2007+ curriculum.<br/>
-<i>April 17,2011</i>: Added MBB 2002+ curriculum.<br/>
-<i>April 17,2011</i>: Added Arch 2002+ curriculum.<br/>
-<i>April 17,2011</i>: Added L Arch 2002+ curriculum.<br/>
-<i>April 16,2011</i>: Added ChE 2009+ curriculum.<br/>
-<i>April 16,2011</i>: Added IE 2004+ curriculum.<br/>
+{{import time}}
+{{for log in changelog:}}
+    {{=I(log.timestamp.strftime('%B %d %Y' ))}}: {{=log.changelog}} <br/>
+{{pass}}
 <br/>
 <br/>
 
