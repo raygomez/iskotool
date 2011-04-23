@@ -124,7 +124,8 @@ def parse_subjects(mygrades, info, mycourse, myyear):
         syllabi = db(db.subject_course.course == course.id).select(db.subject_course.year, distinct=True)
         my_syllabus = [syllabus.year.year for syllabus in syllabi]
         year = filter(lambda x: x <= studno, my_syllabus)
-        if year is not None:
+        
+        if len(year):
             syllabus = db(db.syllabus.year == max(year)).select().first()
         else: return 'too old',None,None,None,None,None,None,None,None
 
@@ -179,8 +180,9 @@ def parse_subjects(mygrades, info, mycourse, myyear):
         for subject in sem['subject']:
             subject['grade'] = subject['grade'].strip()
             if subject['subject'] == 'Bio 1': subject['subject'] = 'BIO 1'   #Fixed for Bio 1
-            if subject['subject'] == 'Soc Sci I': subject['subject'] = 'Soc Sci 1'   #Fixed for Soc Sci I
-            if subject['subject'] == 'Soc Sci II': subject['subject'] = 'Soc Sci 2'   #Fixed for Soc Sci II
+            if ' III' in subject['subject']: subject['subject'] = subject['subject'].replace('III', '3')
+            if ' II' in subject['subject']: subject['subject'] = subject['subject'].replace('II', '2')
+            if ' I' in subject['subject']: subject['subject'] = subject['subject'].replace('I', '1')            
             if subject['subject'] == 'Comm 3 Eng': subject['subject'] = 'Comm 3'   #Fixed for Comm 3
             if subject['subject'] == 'Humanidades 1': subject['subject'] = 'Humad 1' #Fixed for Humad 1
 
