@@ -42,25 +42,34 @@ def dehtml(text):
         print_exc(file=stderr)
         return text
 
+def get_years():
+    import json
+    
+    my_syllabus = []
+
+    if 'Autodetect course' not in request.vars.course:
+        course = db(db.course.course == request.vars.course).select(db.course.id).first()
+        syllabi = db(db.subject_course.course == course.id).select(db.subject_course.year, distinct=True)
+        my_syllabus = [syllabus.year.year for syllabus in syllabi]    
+    
+    return json.dumps(my_syllabus)
+    
 def index():
     import urllib    
     
     courses = db(db.course.id > 0).select(orderby=db.course.course)
     my_course = ['Autodetect course']
-    for course in courses:
-        my_course.append(course.course)
+    for course in courses: my_course.append(course.course)
     
-    syllabi = db(db.syllabus.id > 0).select(orderby=db.syllabus.year)
     my_syllabus = ['Autodetect syllabus']
-    for syllabus in syllabi:
-        my_syllabus.append(syllabus.year)
 
     form = SQLFORM.factory(
         Field('grades', 'text', label='Grades', requires=IS_NOT_EMPTY()),
-        Field('course', 'list:string', requires=IS_IN_SET(range(len(my_course)),labels=my_course, zero=None)),
-        Field('curriculum', 'list:string', requires=IS_IN_SET(range(len(my_syllabus)),labels=my_syllabus, zero=None))
+        Field('course', 'list:string', requires=IS_IN_SET(my_course,labels=my_course, zero=None))
     )
-    
+    year = TR(LABEL('Curriculum'),SELECT('Autodetect curriculum', _id='no_table_curriculum', _name='curriculum', value='Autodetect curriculum'))
+    form[0].insert(-1,year)
+
     contactme = SQLFORM(db.comments)
        
     subjects = None
@@ -73,65 +82,57 @@ def index():
     ges = None
     non_ges = None
     course = None
-    rules = None
-    changelog = db(db.changelog.id > 0).select(orderby=db.changelog.timestamp)
+    notes = None
+    c_notes = None
+    changelog = db(db.changelog.id > 0).select(orderby=~db.changelog.timestamp, limitby=(0,5))
 
     if request.vars.bookmark:
         text = dehtml(urllib.unquote(request.vars.bookmark))
         form.vars.grades = text
         info,mygrades = parse(text)
         if info != 'Error': 
-            mysubjects,year,pes,cwts,ges,non_ges,course,rules = parse_subjects(mygrades, info, '0', '0')
+            mysubjects,year,pes,cwts,ges,non_ges,course,notes,c_notes = parse_subjects(mygrades, info, 'Autodetect course', 'Autodetect curriculum')
             
     if form.accepts(request.vars, session, formname='form_one'):
-        info,mygrades = parse(form.vars.grades)
 
+        info,mygrades = parse(form.vars.grades)
+    
         if info != 'Error': 
-            mysubjects,year,pes,cwts,ges,non_ges,course,rules = parse_subjects(mygrades, info, form.vars.course, form.vars.curriculum)
+            mysubjects,year,pes,cwts,ges,non_ges,course,notes,c_notes = parse_subjects(mygrades, info, form.vars.course,
+                                         form.vars.curriculum)
 
     if contactme.accepts(request.vars, session, formname='form_two'):
         response.flash = 'Thank you for posting.'
         
-    return dict(form=form, info=info, mygrades=mygrades, mysubjects=mysubjects, contactme=contactme, 
-                    year=year, pes=pes, cwts=cwts, ges=ges, non_ges=non_ges,course=course,rules=rules, changelog=changelog)
+    return dict(form=form, info=info, mygrades=mygrades, mysubjects=mysubjects, contactme=contactme,year=year, 
+            pes=pes,cwts=cwts,ges=ges,non_ges=non_ges,course=course,changelog=changelog,notes=notes,c_notes=c_notes)
 
 def parse_subjects(mygrades, info, mycourse, myyear):
 
     courses = db(db.course.id > 0).select(orderby=db.course.course)
-    my_course = ['Autodetect course']
-    for course in courses:
-        my_course.append(course.course)
 
-    syllabi = db(db.syllabus.id > 0).select(orderby=db.syllabus.year)
-    my_syllabus = []
-    for syllabus in syllabi:
-        my_syllabus.append(syllabus.year)
-
-    if mycourse == '0':
+    if mycourse == 'Autodetect course':
         course = db(db.course.course == info['course']).select().first()
         if course is None:
             if 'Master ' in info['course']:   
-                return 'not BS',None,None,None,None,None,None,None
-            else: return 'not supported',None,None,None,None,None,None,None
-    else: course = db(db.course.course == my_course[int(mycourse)]).select().first()  
+                return 'not BS',None,None,None,None,None,None,None,None
+            else: return 'not supported',None,None,None,None,None,None,None,None
+    else: course = db(db.course.course == mycourse).select().first()  
     
-    if myyear == '0':
+    if myyear == 'Autodetect curriculum':
         studno = int(info['studno'][:4])
         syllabi = db(db.subject_course.course == course.id).select(db.subject_course.year, distinct=True)
-        my_syllabus = []
-        for syllabus in syllabi:
-            my_syllabus.append(syllabus.year.year)
-        
+        my_syllabus = [syllabus.year.year for syllabus in syllabi]
         year = filter(lambda x: x <= studno, my_syllabus)
         if year is not None:
             syllabus = db(db.syllabus.year == max(year)).select().first()
-        else: return 'too old',None,None,None,None,None,None,None
+        else: return 'too old',None,None,None,None,None,None,None,None
 
     else: 
-        syllabus = db(db.syllabus.year == int(my_syllabus[int(myyear)-1])).select().first()
+        syllabus = db(db.syllabus.year == int(myyear)).select().first()
         
         if len(db((db.subject_course.course == course.id) & (db.subject_course.year == syllabus.id)).select()) == 0:
-            return 'not supported',None,None,None,None,None,None,None
+            return 'not supported',None,None,None,None,None,None,None,None
         
     majors = db((db.subject_course.course == course.id) & (db.subject_course.year == syllabus.id))._select(db.subject_course.subject)
     
@@ -140,8 +141,8 @@ def parse_subjects(mygrades, info, mycourse, myyear):
     prereqs = db((db.prerequisites.year == syllabus.id) & (db.prerequisites.course.contains(course.id))).select()    
     coreqs = db((db.corequisites.year == syllabus.id) & (db.corequisites.course.contains(course.id))).select()
     
-    rules = db(db.retention.course.contains(course.id)).select().first()
-
+    notes = db(db.notes.course.contains(course.id)).select().first()
+    c_notes = db(db.notes_curriculum.course.contains(course.id)).select().first() 
     ges_domain = db(db.ge_domain.id > 0)._select(db.ge_domain.ge)
     ah = db(db.domains.domain == 'AH').select().first()
     ssp = db(db.domains.domain == 'SSP').select().first()
@@ -317,7 +318,7 @@ def parse_subjects(mygrades, info, mycourse, myyear):
                     mysubjects['non_elig'].append({'subject':subject.name, 'prereq':', '.join(prereq_sub), 'coreq':', '.join(core)})        
                 else: mysubjects['non_elig'].append({'subject':subject.name, 'prereq':', '.join(prereq_sub), 'coreq':''})        
                                  
-    return mysubjects, syllabus.year, taken_pes, taken_cwts, taken_ges, not_taken_ges, course.course, rules
+    return mysubjects, syllabus.year, taken_pes, taken_cwts, taken_ges, not_taken_ges, course.course, notes, c_notes
     
 def parse(grades):
     index = grades.find('View Grades')

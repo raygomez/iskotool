@@ -175,3 +175,17 @@ CREATE TABLE changelog(
     timestamp TIMESTAMP NOT NULL DEFAULT '2011-04-19 08:06:28'
 );
 success!
+timestamp: 2011-04-22T12:34:12.348635
+CREATE TABLE notes(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    note TEXT NOT NULL,
+    course TEXT
+);
+success!
+timestamp: 2011-04-22T12:47:46.316953
+CREATE TABLE notes_curriculum(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    note TEXT NOT NULL,
+    course TEXT
+);
+success!
